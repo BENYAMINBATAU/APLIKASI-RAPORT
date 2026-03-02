@@ -1,0 +1,2287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Benyamin Batau Scheduling App — SMKN 1 Sumarorong</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #070b14;
+  --bg2: #0d1220;
+  --panel: #111827;
+  --panel2: #1a2235;
+  --panel3: #1f2940;
+  --border: rgba(56,189,248,0.12);
+  --border2: rgba(56,189,248,0.25);
+  --sky: #38bdf8;
+  --blue: #3b82f6;
+  --indigo: #6366f1;
+  --amber: #f59e0b;
+  --emerald: #10b981;
+  --rose: #f43f5e;
+  --violet: #8b5cf6;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --text3: #475569;
+  --radius: 14px;
+  --radius-sm: 8px;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Outfit',sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  min-height:100vh;
+  overflow-x:hidden;
+}
+/* BG Effects */
+.bg-fx{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background:
+    radial-gradient(ellipse 60% 40% at 20% 10%, rgba(56,189,248,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 50% at 80% 80%, rgba(99,102,241,0.05) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 30% at 50% 50%, rgba(16,185,129,0.03) 0%, transparent 70%);
+}
+.grid-bg{
+  position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:linear-gradient(rgba(56,189,248,0.03) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(56,189,248,0.03) 1px,transparent 1px);
+  background-size:50px 50px;
+}
+/* LAYOUT */
+.app-shell{position:relative;z-index:1;display:flex;flex-direction:column;min-height:100vh;}
+/* TOPBAR */
+.topbar{
+  height:64px;border-bottom:1px solid var(--border);
+  background:rgba(7,11,20,0.9);backdrop-filter:blur(20px);
+  position:sticky;top:0;z-index:200;
+  display:flex;align-items:center;padding:0 24px;gap:16px;
+}
+.topbar-logo{display:flex;align-items:center;gap:12px;flex-shrink:0;}
+.logo-mark{
+  width:38px;height:38px;border-radius:10px;
+  background:linear-gradient(135deg,var(--sky),var(--indigo));
+  display:flex;align-items:center;justify-content:center;
+  font-size:18px;box-shadow:0 0 20px rgba(56,189,248,0.3);
+  animation:logopulse 4s ease-in-out infinite;
+}
+@keyframes logopulse{0%,100%{box-shadow:0 0 20px rgba(56,189,248,0.2);}50%{box-shadow:0 0 35px rgba(56,189,248,0.5);}}
+.logo-text{line-height:1;}
+.logo-text h1{font-size:15px;font-weight:800;color:var(--text);letter-spacing:-0.3px;}
+.logo-text p{font-size:11px;color:var(--text3);font-family:'JetBrains Mono',monospace;letter-spacing:0.5px;}
+.topbar-nav{display:flex;gap:4px;flex:1;justify-content:center;}
+.nav-tab{
+  padding:8px 16px;border-radius:var(--radius-sm);border:none;cursor:pointer;
+  font-family:'Outfit',sans-serif;font-size:13px;font-weight:600;
+  color:var(--text3);background:transparent;transition:all 0.2s;
+  display:flex;align-items:center;gap:6px;position:relative;
+}
+.nav-tab:hover{color:var(--text2);background:var(--panel2);}
+.nav-tab.active{color:var(--sky);background:rgba(56,189,248,0.1);}
+.nav-tab .tab-badge{
+  background:var(--sky);color:var(--bg);border-radius:10px;
+  padding:1px 6px;font-size:10px;font-weight:800;
+  font-family:'JetBrains Mono',monospace;
+}
+.topbar-actions{display:flex;gap:8px;flex-shrink:0;}
+
+/* PAGES */
+.page{display:none;flex:1;padding:24px;}
+.page.active{display:block;animation:pagein 0.3s ease;}
+@keyframes pagein{from{opacity:0;transform:translateY(8px);}to{opacity:1;transform:translateY(0);}}
+
+/* SECTION HEADER */
+.section-header{
+  display:flex;align-items:flex-end;justify-content:space-between;
+  margin-bottom:24px;
+}
+.section-title h2{font-size:24px;font-weight:800;letter-spacing:-0.5px;}
+.section-title p{font-size:14px;color:var(--text2);margin-top:4px;}
+.accent-line{
+  width:40px;height:3px;border-radius:2px;margin-bottom:8px;
+  background:linear-gradient(90deg,var(--sky),var(--indigo));
+}
+
+/* CARDS */
+.card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;
+  transition:border-color 0.2s;
+}
+.card:hover{border-color:var(--border2);}
+.card-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:16px;
+}
+.card-title{font-size:13px;font-weight:700;color:var(--text2);
+  letter-spacing:1.5px;text-transform:uppercase;
+  display:flex;align-items:center;gap:8px;}
+.card-title::before{
+  content:'';width:3px;height:14px;border-radius:2px;
+  background:linear-gradient(var(--sky),var(--indigo));flex-shrink:0;
+}
+
+/* GRID LAYOUTS */
+.grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;}
+.grid-3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;}
+.grid-4{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;}
+.grid-auto{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:16px;}
+
+/* STAT CARDS */
+.stat-card{
+  background:var(--panel);border:1px solid var(--border);
+  border-radius:var(--radius);padding:20px;
+  display:flex;flex-direction:column;gap:8px;
+  position:relative;overflow:hidden;
+  transition:all 0.2s;
+}
+.stat-card::after{
+  content:'';position:absolute;top:-30px;right:-30px;
+  width:80px;height:80px;border-radius:50%;
+  background:var(--stat-color,var(--sky));opacity:0.06;
+}
+.stat-card:hover{border-color:var(--border2);transform:translateY(-2px);}
+.stat-icon{font-size:22px;margin-bottom:4px;}
+.stat-num{font-size:36px;font-weight:900;font-family:'JetBrains Mono',monospace;
+  color:var(--stat-color,var(--sky));}
+.stat-label{font-size:12px;color:var(--text3);font-weight:600;letter-spacing:0.5px;text-transform:uppercase;}
+.stat-sub{font-size:11px;color:var(--text3);}
+
+/* BUTTONS */
+.btn{
+  padding:9px 18px;border-radius:var(--radius-sm);border:none;cursor:pointer;
+  font-family:'Outfit',sans-serif;font-weight:700;font-size:13px;
+  transition:all 0.18s;display:inline-flex;align-items:center;gap:7px;
+  letter-spacing:0.2px;white-space:nowrap;
+}
+.btn-sky{background:var(--sky);color:var(--bg);box-shadow:0 4px 14px rgba(56,189,248,0.25);}
+.btn-sky:hover{box-shadow:0 6px 22px rgba(56,189,248,0.4);transform:translateY(-1px);}
+.btn-indigo{background:var(--indigo);color:white;box-shadow:0 4px 14px rgba(99,102,241,0.25);}
+.btn-indigo:hover{box-shadow:0 6px 22px rgba(99,102,241,0.4);transform:translateY(-1px);}
+.btn-ghost{background:var(--panel2);border:1px solid var(--border);color:var(--text2);}
+.btn-ghost:hover{border-color:var(--border2);color:var(--text);}
+.btn-danger{background:rgba(244,63,94,0.12);border:1px solid rgba(244,63,94,0.2);color:var(--rose);}
+.btn-danger:hover{background:rgba(244,63,94,0.2);}
+.btn-success{background:rgba(16,185,129,0.12);border:1px solid rgba(16,185,129,0.2);color:var(--emerald);}
+.btn-success:hover{background:rgba(16,185,129,0.2);}
+.btn-amber{background:rgba(245,158,11,0.12);border:1px solid rgba(245,158,11,0.2);color:var(--amber);}
+.btn-sm{padding:6px 12px;font-size:12px;}
+.btn-xs{padding:4px 9px;font-size:11px;border-radius:6px;}
+.btn-icon{padding:8px;width:34px;height:34px;justify-content:center;}
+
+/* FORM */
+.form-row{display:grid;gap:14px;margin-bottom:14px;}
+.form-row.cols-2{grid-template-columns:1fr 1fr;}
+.form-row.cols-3{grid-template-columns:1fr 1fr 1fr;}
+.form-row.cols-4{grid-template-columns:1fr 1fr 1fr 1fr;}
+.fg{display:flex;flex-direction:column;gap:5px;}
+label{font-size:11px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase;}
+input,select,textarea{
+  padding:9px 13px;
+  background:var(--panel2);border:1px solid var(--border);
+  border-radius:var(--radius-sm);color:var(--text);
+  font-family:'Outfit',sans-serif;font-size:14px;
+  transition:border-color 0.18s,box-shadow 0.18s;outline:none;
+  width:100%;
+}
+input:focus,select:focus,textarea:focus{
+  border-color:var(--sky);box-shadow:0 0 0 3px rgba(56,189,248,0.1);
+}
+select option{background:var(--panel2);}
+input::placeholder,textarea::placeholder{color:var(--text3);}
+
+/* TABLE */
+.data-table{width:100%;border-collapse:separate;border-spacing:0 4px;}
+.data-table th{
+  padding:10px 14px;font-size:11px;font-weight:700;
+  color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;
+  text-align:left;
+}
+.data-table td{
+  padding:11px 14px;font-size:13px;
+  background:var(--panel2);transition:background 0.15s;
+}
+.data-table td:first-child{border-radius:var(--radius-sm) 0 0 var(--radius-sm);}
+.data-table td:last-child{border-radius:0 var(--radius-sm) var(--radius-sm) 0;}
+.data-table tr:hover td{background:var(--panel3);}
+.empty-row td{text-align:center;color:var(--text3);padding:32px !important;
+  background:transparent !important;font-size:13px;}
+
+/* BADGES */
+.badge{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700;
+  letter-spacing:0.5px;
+}
+.badge-sky{background:rgba(56,189,248,0.12);color:var(--sky);}
+.badge-indigo{background:rgba(99,102,241,0.12);color:var(--indigo);}
+.badge-amber{background:rgba(245,158,11,0.12);color:var(--amber);}
+.badge-emerald{background:rgba(16,185,129,0.12);color:var(--emerald);}
+.badge-rose{background:rgba(244,63,94,0.12);color:var(--rose);}
+.badge-violet{background:rgba(139,92,246,0.12);color:var(--violet);}
+
+/* COLOR DOT */
+.cdot{width:10px;height:10px;border-radius:3px;flex-shrink:0;display:inline-block;}
+
+/* MODAL */
+.overlay{
+  position:fixed;inset:0;background:rgba(7,11,20,0.85);
+  backdrop-filter:blur(12px);z-index:500;
+  display:none;align-items:center;justify-content:center;
+  padding:20px;
+}
+.overlay.open{display:flex;animation:fadein2 0.2s ease;}
+@keyframes fadein2{from{opacity:0;}to{opacity:1;}}
+.modal{
+  background:var(--panel);border:1px solid var(--border2);
+  border-radius:18px;padding:28px;
+  width:100%;max-width:580px;max-height:90vh;overflow-y:auto;
+  box-shadow:0 25px 70px rgba(0,0,0,0.5);
+  animation:slidein 0.3s ease;
+}
+.modal.wide{max-width:800px;}
+@keyframes slidein{from{transform:translateY(20px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+.modal-header{
+  display:flex;align-items:center;justify-content:space-between;
+  margin-bottom:22px;
+}
+.modal-header h3{font-size:18px;font-weight:800;}
+.modal-close{
+  width:32px;height:32px;border-radius:8px;
+  background:var(--panel2);border:1px solid var(--border);
+  color:var(--text2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  font-size:16px;
+}
+.modal-close:hover{background:var(--panel3);color:var(--text);}
+.modal-footer{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;padding-top:20px;border-top:1px solid var(--border);}
+
+/* TOAST */
+.toast-container{position:fixed;bottom:24px;right:24px;z-index:9999;display:flex;flex-direction:column;gap:8px;}
+.toast{
+  background:var(--panel);border:1px solid var(--border2);
+  border-radius:12px;padding:13px 18px;
+  display:flex;align-items:center;gap:10px;min-width:280px;
+  box-shadow:0 8px 30px rgba(0,0,0,0.4);
+  transform:translateX(120%);transition:transform 0.3s ease;
+}
+.toast.show{transform:translateX(0);}
+.toast.success{border-color:rgba(16,185,129,0.3);}
+.toast.error{border-color:rgba(244,63,94,0.3);}
+.toast.warning{border-color:rgba(245,158,11,0.3);}
+.toast-ico{font-size:18px;}
+.toast-body .toast-title{font-size:13px;font-weight:700;}
+.toast-body .toast-sub{font-size:11px;color:var(--text3);}
+
+/* TIMETABLE */
+.tt-controls{
+  display:flex;align-items:center;gap:12px;margin-bottom:20px;flex-wrap:wrap;
+}
+.tt-select{padding:8px 14px;min-width:180px;}
+.tt-wrap{overflow-x:auto;border-radius:var(--radius);border:1px solid var(--border);}
+.tt-grid{
+  border-collapse:separate;border-spacing:2px;
+  min-width:900px;padding:8px;
+  background:var(--panel);
+}
+.tt-grid th{
+  padding:10px 8px;font-size:11px;font-weight:700;
+  color:var(--text3);letter-spacing:1.5px;text-transform:uppercase;
+  background:var(--panel2);border-radius:6px;white-space:nowrap;
+}
+.tt-grid td{
+  height:68px;width:110px;border-radius:8px;
+  background:var(--panel2);vertical-align:top;
+  position:relative;cursor:pointer;
+  transition:background 0.15s;
+}
+.tt-grid td:hover{background:var(--panel3);}
+.tt-grid td.filled{background:transparent;cursor:default;}
+.tt-grid td.filled:hover{background:transparent;}
+.tt-grid td.time-td{
+  background:transparent;cursor:default;width:80px;
+  vertical-align:middle;text-align:center;
+}
+.time-label{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--text3);line-height:1.5;}
+.add-hint{
+  position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
+  font-size:20px;color:var(--text3);opacity:0;transition:opacity 0.15s;
+  pointer-events:none;
+}
+.tt-grid td:not(.filled):not(.time-td):hover .add-hint{opacity:1;}
+.slot-block{
+  width:100%;height:100%;border-radius:8px;
+  padding:6px 8px;display:flex;flex-direction:column;
+  justify-content:space-between;position:relative;overflow:hidden;
+  border-left:3px solid rgba(255,255,255,0.25);
+}
+.slot-block::before{content:'';position:absolute;inset:0;background:rgba(255,255,255,0.04);}
+.slot-name{font-size:12px;font-weight:800;color:rgba(255,255,255,0.95);position:relative;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.slot-teacher{font-size:9px;color:rgba(255,255,255,0.6);position:relative;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+  font-family:'JetBrains Mono',monospace;}
+.slot-room{font-size:9px;color:rgba(255,255,255,0.4);position:relative;}
+.slot-del{
+  position:absolute;top:3px;right:3px;width:16px;height:16px;
+  border-radius:50%;background:rgba(0,0,0,0.5);border:none;
+  color:white;font-size:9px;cursor:pointer;
+  display:none;align-items:center;justify-content:center;z-index:10;
+}
+.slot-block:hover .slot-del{display:flex;}
+/* ISTIRAHAT */
+.tt-grid td.istirahat{
+  background:var(--bg2);cursor:default;
+}
+.istirahat-label{
+  width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+  font-size:10px;color:var(--text3);font-weight:600;letter-spacing:1px;text-transform:uppercase;
+}
+
+/* PROGRESS BAR */
+.progress-bar-wrap{background:var(--panel2);border-radius:10px;height:6px;overflow:hidden;}
+.progress-bar{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--sky),var(--indigo));transition:width 0.5s ease;}
+
+/* PILL TAGS */
+.tag{
+  display:inline-flex;align-items:center;gap:4px;
+  padding:3px 10px;border-radius:20px;
+  font-size:11px;font-weight:600;
+  background:var(--panel3);color:var(--text2);
+  border:1px solid var(--border);
+}
+
+/* DIVIDER */
+.divider{height:1px;background:var(--border);margin:20px 0;}
+
+/* SCROLLBAR */
+::-webkit-scrollbar{width:5px;height:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* DASHBOARD CARDS */
+.welcome-banner{
+  background:linear-gradient(135deg,rgba(56,189,248,0.1),rgba(99,102,241,0.1));
+  border:1px solid var(--border2);border-radius:var(--radius);
+  padding:28px;margin-bottom:24px;position:relative;overflow:hidden;
+}
+.welcome-banner::before{
+  content:'🎓';position:absolute;right:24px;top:50%;
+  transform:translateY(-50%);font-size:64px;opacity:0.15;
+}
+.welcome-banner h2{font-size:26px;font-weight:900;letter-spacing:-0.5px;
+  background:linear-gradient(90deg,var(--sky),var(--indigo));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.welcome-banner p{color:var(--text2);margin-top:6px;font-size:14px;}
+.welcome-banner .school-meta{
+  display:flex;gap:12px;margin-top:16px;flex-wrap:wrap;
+}
+
+/* SETUP WIZARD */
+.wizard-steps{display:flex;gap:0;margin-bottom:32px;position:relative;}
+.wizard-steps::before{
+  content:'';position:absolute;top:18px;left:18px;right:18px;height:2px;
+  background:var(--panel2);z-index:0;
+}
+.wstep{
+  display:flex;flex-direction:column;align-items:center;gap:8px;
+  flex:1;position:relative;z-index:1;cursor:pointer;
+}
+.wstep-circle{
+  width:36px;height:36px;border-radius:50%;
+  border:2px solid var(--border2);
+  background:var(--panel);color:var(--text3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:800;transition:all 0.3s;
+}
+.wstep.done .wstep-circle{background:var(--emerald);border-color:var(--emerald);color:white;}
+.wstep.active .wstep-circle{background:var(--sky);border-color:var(--sky);color:var(--bg);box-shadow:0 0 20px rgba(56,189,248,0.4);}
+.wstep-label{font-size:11px;font-weight:600;color:var(--text3);text-align:center;max-width:80px;}
+.wstep.active .wstep-label{color:var(--sky);}
+.wstep.done .wstep-label{color:var(--emerald);}
+
+/* CONFLICT INDICATOR */
+.conflict-dot{
+  width:8px;height:8px;border-radius:50%;
+  background:var(--rose);display:inline-block;
+  animation:blink 1s ease-in-out infinite;
+}
+@keyframes blink{0%,100%{opacity:1;}50%{opacity:0.3;}}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .grid-4,.grid-3,.grid-2{grid-template-columns:1fr 1fr;}
+  .form-row.cols-4,.form-row.cols-3{grid-template-columns:1fr 1fr;}
+}
+@media(max-width:600px){
+  .grid-4,.grid-3,.grid-2{grid-template-columns:1fr;}
+  .topbar-nav{display:none;}
+  .form-row.cols-2,.form-row.cols-3,.form-row.cols-4{grid-template-columns:1fr;}
+}
+
+/* COLOR PICKER */
+.color-grid{display:flex;gap:8px;flex-wrap:wrap;}
+.cpick{
+  width:30px;height:30px;border-radius:8px;cursor:pointer;
+  border:2px solid transparent;transition:all 0.15s;flex-shrink:0;
+}
+.cpick:hover,.cpick.sel{border-color:white;transform:scale(1.2);}
+
+/* SEARCH INPUT */
+.search-wrap{position:relative;}
+.search-wrap input{padding-left:36px;}
+.search-wrap::before{
+  content:'🔍';position:absolute;left:11px;top:50%;
+  transform:translateY(-50%);font-size:13px;pointer-events:none;
+  z-index:1;
+}
+
+/* JAM PELAJARAN ROW */
+.jam-row{
+  display:flex;align-items:center;gap:10px;
+  padding:10px 14px;background:var(--panel2);
+  border-radius:var(--radius-sm);margin-bottom:6px;
+  border:1px solid var(--border);
+}
+.jam-row.istirahat-row{border-color:rgba(245,158,11,0.2);background:rgba(245,158,11,0.05);}
+.jam-num{
+  width:28px;height:28px;border-radius:7px;
+  background:var(--panel3);display:flex;align-items:center;justify-content:center;
+  font-size:11px;font-weight:800;color:var(--text2);flex-shrink:0;
+  font-family:'JetBrains Mono',monospace;
+}
+.jam-time{font-size:12px;font-family:'JetBrains Mono',monospace;color:var(--text2);width:120px;flex-shrink:0;}
+.jam-type{flex:1;}
+
+/* MAPEL ASSIGN */
+.assign-row{
+  display:flex;align-items:center;gap:10px;
+  padding:8px 12px;border-radius:var(--radius-sm);
+  background:var(--panel2);margin-bottom:5px;
+  border:1px solid var(--border);
+}
+.assign-mapel{flex:1;font-size:13px;font-weight:700;}
+.assign-jam{font-size:12px;color:var(--text3);font-family:'JetBrains Mono',monospace;width:60px;text-align:center;}
+
+/* SUMMARY TABLE for dashboard */
+.class-summary-row{
+  display:flex;align-items:center;gap:12px;
+  padding:12px 16px;background:var(--panel2);
+  border-radius:var(--radius-sm);margin-bottom:6px;
+  border:1px solid var(--border);cursor:pointer;
+  transition:all 0.15s;
+}
+.class-summary-row:hover{border-color:var(--border2);background:var(--panel3);}
+.class-name{font-size:14px;font-weight:700;min-width:120px;}
+.class-prog{flex:1;}
+
+/* PRINT */
+@media print{
+  .topbar,.toast-container,.modal-overlay{display:none!important;}
+  .page{display:block!important;}
+  body{background:white;color:black;}
+  .tt-grid th,.tt-grid td{background:#f0f0f0!important;}
+  .slot-block{border:1px solid #ccc!important;}
+}
+</style>
+</head>
+<body>
+<div class="bg-fx"></div>
+<div class="grid-bg"></div>
+
+<div class="app-shell">
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-logo">
+    <div class="logo-mark">📋</div>
+    <div class="logo-text">
+      <h1>BENYAMIN BATAU</h1>
+      <p>SMKN 1 SUMARORONG — SCHEDULING APP</p>
+    </div>
+  </div>
+  <div class="topbar-nav">
+    <button class="nav-tab active" onclick="goPage('dashboard')" id="tab-dashboard">🏠 Dashboard</button>
+    <button class="nav-tab" onclick="goPage('setup')" id="tab-setup">⚙️ Setup Data</button>
+    <button class="nav-tab" onclick="goPage('jadwal')" id="tab-jadwal">📅 Buat Jadwal</button>
+    <button class="nav-tab" onclick="goPage('rekap')" id="tab-rekap">📊 Rekap</button>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-ghost btn-sm" onclick="exportAll()">⬇ Export</button>
+    <button class="btn btn-ghost btn-sm" onclick="openImportModal()">⬆ Import</button>
+    <button class="btn btn-sky btn-sm" onclick="goPage('jadwal')">+ Buat Jadwal</button>
+  </div>
+</div>
+
+<!-- ============== DASHBOARD ============== -->
+<div class="page active" id="page-dashboard">
+  <div class="welcome-banner">
+    <h2>UPTD SMKN 1 Sumarorong</h2>
+    <p>Sistem Manajemen Jadwal Pelajaran — Benyamin Batau Scheduling App v3.0</p>
+    <div class="school-meta" id="schoolMetaBanner"></div>
+  </div>
+  <div class="grid-4" id="dashStats" style="margin-bottom:24px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Kelengkapan Data Setup</div>
+        <button class="btn btn-ghost btn-sm" onclick="goPage('setup')">Lengkapi →</button>
+      </div>
+      <div id="setupProgress"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Progress Jadwal Per Kelas</div>
+        <button class="btn btn-ghost btn-sm" onclick="goPage('jadwal')">Lihat →</button>
+      </div>
+      <div id="jadwalProgress" style="max-height:220px;overflow-y:auto;"></div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="grid-2" style="margin-top:0;">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Beban Mengajar Guru</div></div>
+      <div id="guruBeban" style="max-height:220px;overflow-y:auto;"></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Konflik Jadwal</div></div>
+      <div id="konflikList"></div>
+    </div>
+  </div>
+</div>
+
+<!-- ============== SETUP DATA ============== -->
+<div class="page" id="page-setup">
+  <!-- WIZARD STEPS -->
+  <div class="wizard-steps">
+    <div class="wstep" id="ws1" onclick="goSetupTab(1)">
+      <div class="wstep-circle">1</div>
+      <div class="wstep-label">Info Sekolah</div>
+    </div>
+    <div class="wstep" id="ws2" onclick="goSetupTab(2)">
+      <div class="wstep-circle">2</div>
+      <div class="wstep-label">Jurusan & Tingkat</div>
+    </div>
+    <div class="wstep" id="ws3" onclick="goSetupTab(3)">
+      <div class="wstep-circle">3</div>
+      <div class="wstep-label">Kelas</div>
+    </div>
+    <div class="wstep" id="ws4" onclick="goSetupTab(4)">
+      <div class="wstep-circle">4</div>
+      <div class="wstep-label">Mata Pelajaran</div>
+    </div>
+    <div class="wstep" id="ws5" onclick="goSetupTab(5)">
+      <div class="wstep-circle">5</div>
+      <div class="wstep-label">Guru</div>
+    </div>
+    <div class="wstep" id="ws6" onclick="goSetupTab(6)">
+      <div class="wstep-circle">6</div>
+      <div class="wstep-label">Jam Pelajaran</div>
+    </div>
+    <div class="wstep" id="ws7" onclick="goSetupTab(7)">
+      <div class="wstep-circle">7</div>
+      <div class="wstep-label">Assign Mapel</div>
+    </div>
+  </div>
+
+  <!-- STEP PANELS -->
+  <div id="setup-panels">
+
+    <!-- STEP 1: Info Sekolah -->
+    <div class="setup-panel" id="sp1">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="accent-line"></div>
+          <h2>Informasi Sekolah</h2>
+          <p>Data umum UPTD SMKN 1 Sumarorong</p>
+        </div>
+      </div>
+      <div class="card" style="max-width:620px;">
+        <div class="form-row cols-2">
+          <div class="fg"><label>Nama Sekolah</label><input id="s_namaSekolah" value="UPTD SMKN 1 Sumarorong" placeholder="Nama sekolah..."></div>
+          <div class="fg"><label>NPSN</label><input id="s_npsn" placeholder="Nomor NPSN..."></div>
+        </div>
+        <div class="form-row cols-2">
+          <div class="fg"><label>Kepala Sekolah</label><input id="s_kepsek" placeholder="Nama kepala sekolah..."></div>
+          <div class="fg"><label>Tahun Pelajaran</label>
+            <select id="s_tp">
+              <option value="2024/2025">2024/2025</option>
+              <option value="2025/2026" selected>2025/2026</option>
+              <option value="2026/2027">2026/2027</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row cols-2">
+          <div class="fg"><label>Semester</label>
+            <select id="s_semester">
+              <option value="Ganjil">Semester Ganjil</option>
+              <option value="Genap">Semester Genap</option>
+            </select>
+          </div>
+          <div class="fg"><label>Alamat Sekolah</label><input id="s_alamat" placeholder="Alamat..."></div>
+        </div>
+        <div class="form-row cols-2">
+          <div class="fg"><label>Hari Belajar</label>
+            <select id="s_hari">
+              <option value="5">Senin - Jumat (5 hari)</option>
+              <option value="6">Senin - Sabtu (6 hari)</option>
+            </select>
+          </div>
+          <div class="fg"><label>Kurikulum</label>
+            <select id="s_kur">
+              <option value="Merdeka">Kurikulum Merdeka</option>
+              <option value="2013">Kurikulum 2013 (K13)</option>
+              <option value="K13-Rev">K13 Revisi</option>
+            </select>
+          </div>
+        </div>
+        <button class="btn btn-sky" onclick="saveSekolah()">💾 Simpan Info Sekolah</button>
+      </div>
+    </div>
+
+    <!-- STEP 2: Jurusan & Program Studi -->
+    <div class="setup-panel" id="sp2" style="display:none;">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="accent-line"></div>
+          <h2>Jurusan & Program Studi</h2>
+          <p>Daftar jurusan/kompetensi keahlian di SMKN 1 Sumarorong</p>
+        </div>
+        <button class="btn btn-sky" onclick="openModal('modalJurusan')">+ Tambah Jurusan</button>
+      </div>
+      <div class="grid-auto" id="jurusanGrid"></div>
+    </div>
+
+    <!-- STEP 3: Kelas -->
+    <div class="setup-panel" id="sp3" style="display:none;">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="accent-line"></div>
+          <h2>Daftar Kelas</h2>
+          <p>Generate atau tambah kelas manual</p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-success" onclick="generateKelas()">⚡ Auto-Generate Kelas</button>
+          <button class="btn btn-sky" onclick="openModal('modalKelas')">+ Tambah Manual</button>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="card-title" style="margin-bottom:12px;">Filter & Cari</div>
+        <div class="form-row cols-3">
+          <div class="fg search-wrap"><label>Cari Kelas</label><input id="searchKelas" oninput="renderKelas()" placeholder="Nama kelas..."></div>
+          <div class="fg"><label>Filter Tingkat</label>
+            <select id="filterTingkat" onchange="renderKelas()">
+              <option value="">Semua Tingkat</option>
+              <option value="X">Kelas X</option>
+              <option value="XI">Kelas XI</option>
+              <option value="XII">Kelas XII</option>
+              <option value="XIII">Kelas XIII</option>
+            </select>
+          </div>
+          <div class="fg"><label>Filter Jurusan</label>
+            <select id="filterJurusanKelas" onchange="renderKelas()">
+              <option value="">Semua Jurusan</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <table class="data-table" id="kelasTable">
+        <thead><tr><th>#</th><th>Nama Kelas</th><th>Tingkat</th><th>Jurusan</th><th>Rombel</th><th>Wali Kelas</th><th>Aksi</th></tr></thead>
+        <tbody id="kelasTbody"><tr class="empty-row"><td colspan="7">Belum ada kelas. Tambah manual atau gunakan Auto-Generate.</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- STEP 4: Mata Pelajaran -->
+    <div class="setup-panel" id="sp4" style="display:none;">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="accent-line"></div>
+          <h2>Mata Pelajaran</h2>
+          <p>Daftar semua mapel yang diajarkan di sekolah</p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-success" onclick="importMapelDefault()">📦 Import Mapel Default SMK</button>
+          <button class="btn btn-sky" onclick="openModal('modalMapel')">+ Tambah Mapel</button>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="form-row cols-3">
+          <div class="fg search-wrap"><label>Cari</label><input id="searchMapel" oninput="renderMapel()" placeholder="Nama mapel..."></div>
+          <div class="fg"><label>Filter Kelompok</label>
+            <select id="filterKelMapel" onchange="renderMapel()">
+              <option value="">Semua Kelompok</option>
+              <option value="Umum">Kelompok Umum (A)</option>
+              <option value="Adaptif">Kelompok Adaptif (B)</option>
+              <option value="Produktif">Kelompok Produktif (C)</option>
+              <option value="Muatan Lokal">Muatan Lokal</option>
+              <option value="Pengembangan Diri">Pengembangan Diri</option>
+            </select>
+          </div>
+          <div class="fg"><label>Total Mapel</label>
+            <div style="padding:9px 13px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'JetBrains Mono',monospace;font-size:14px;" id="mapelCount">0 mapel terdaftar</div>
+          </div>
+        </div>
+      </div>
+      <table class="data-table" id="mapelTable">
+        <thead><tr><th>#</th><th>Kode</th><th>Nama Mata Pelajaran</th><th>Kelompok</th><th>Jurusan</th><th>Warna</th><th>Aksi</th></tr></thead>
+        <tbody id="mapelTbody"><tr class="empty-row"><td colspan="7">Belum ada mata pelajaran.</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- STEP 5: Guru -->
+    <div class="setup-panel" id="sp5" style="display:none;">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="accent-line"></div>
+          <h2>Data Guru</h2>
+          <p>Input guru beserta bidang studi dan maksimal jam mengajar</p>
+        </div>
+        <button class="btn btn-sky" onclick="openModal('modalGuru')">+ Tambah Guru</button>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="form-row cols-2">
+          <div class="fg search-wrap"><label>Cari Guru</label><input id="searchGuru" oninput="renderGuru()" placeholder="Nama atau NIP..."></div>
+          <div class="fg"><label>Filter Mapel</label>
+            <select id="filterGuruMapel" onchange="renderGuru()">
+              <option value="">Semua Mapel</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <table class="data-table">
+        <thead><tr><th>#</th><th>NIP/NUPTK</th><th>Nama Guru</th><th>Mapel Diampu</th><th>Maks Jam/Minggu</th><th>Sudah Dijadwal</th><th>Aksi</th></tr></thead>
+        <tbody id="guruTbody"><tr class="empty-row"><td colspan="7">Belum ada data guru.</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- STEP 6: Jam Pelajaran -->
+    <div class="setup-panel" id="sp6" style="display:none;">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="accent-line"></div>
+          <h2>Jam Pelajaran</h2>
+          <p>Atur waktu jam 1 s.d. jam terakhir termasuk istirahat</p>
+        </div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-success" onclick="generateJamDefault()">⚡ Generate Otomatis</button>
+          <button class="btn btn-sky" onclick="openModal('modalJam')">+ Tambah Jam</button>
+        </div>
+      </div>
+      <div class="grid-2">
+        <div>
+          <div id="jamList"></div>
+        </div>
+        <div class="card">
+          <div class="card-title" style="margin-bottom:16px;">Konfigurasi Cepat</div>
+          <div class="form-row">
+            <div class="fg"><label>Jam Mulai Sekolah</label><input type="time" id="jamMulai" value="07:00"></div>
+          </div>
+          <div class="form-row cols-2">
+            <div class="fg"><label>Durasi Per JP (menit)</label><input type="number" id="durJP" value="45" min="30" max="60"></div>
+            <div class="fg"><label>Jumlah JP</label><input type="number" id="jmlJP" value="10" min="6" max="14"></div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Istirahat Setelah Jam</label><input id="istirahatSetelah" value="4,7" placeholder="Contoh: 4,7"></div>
+          </div>
+          <div class="form-row">
+            <div class="fg"><label>Durasi Istirahat (menit)</label><input type="number" id="durIstirahat" value="15"></div>
+          </div>
+          <button class="btn btn-sky" onclick="generateJamOtomatis()">⚡ Terapkan Konfigurasi</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 7: Assign Mapel ke Kelas -->
+    <div class="setup-panel" id="sp7" style="display:none;">
+      <div class="section-header">
+        <div class="section-title">
+          <div class="accent-line"></div>
+          <h2>Assign Mata Pelajaran ke Kelas</h2>
+          <p>Tentukan berapa jam per minggu tiap mapel di setiap kelas</p>
+        </div>
+      </div>
+      <div class="card" style="margin-bottom:20px;">
+        <div class="form-row cols-3">
+          <div class="fg"><label>Pilih Kelas</label>
+            <select id="assignKelas" onchange="renderAssign()">
+              <option value="">-- Pilih Kelas --</option>
+            </select>
+          </div>
+          <div class="fg"><label>Total Jam Tersetting</label>
+            <div style="padding:9px 13px;background:var(--panel2);border:1px solid var(--border);border-radius:var(--radius-sm);font-family:'JetBrains Mono',monospace;" id="totalJamAssign">—</div>
+          </div>
+          <div class="fg"><label>Aksi</label>
+            <div style="display:flex;gap:8px;">
+              <button class="btn btn-success btn-sm" onclick="copyAssignFromKelas()">📋 Salin dari Kelas Lain</button>
+              <button class="btn btn-sky btn-sm" onclick="openModal('modalAssign')">+ Tambah Mapel</button>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div id="assignTable"></div>
+    </div>
+
+  </div><!-- end setup-panels -->
+</div>
+
+<!-- ============== JADWAL ============== -->
+<div class="page" id="page-jadwal">
+  <div class="section-header">
+    <div class="section-title">
+      <div class="accent-line"></div>
+      <h2>Buat & Kelola Jadwal</h2>
+      <p>Timetable interaktif per kelas</p>
+    </div>
+  </div>
+  <div class="tt-controls">
+    <div class="fg" style="width:220px;"><label>Pilih Kelas</label>
+      <select class="tt-select" id="ttKelas" onchange="renderTimetable()">
+        <option value="">-- Pilih Kelas --</option>
+      </select>
+    </div>
+    <div style="margin-top:18px;display:flex;gap:8px;">
+      <button class="btn btn-ghost btn-sm" onclick="clearTimetableKelas()">🗑 Hapus Jadwal Kelas Ini</button>
+      <button class="btn btn-success btn-sm" onclick="autoFillJadwal()">⚡ Auto-Fill</button>
+      <button class="btn btn-amber btn-sm" onclick="checkKonflik()">⚠ Cek Konflik</button>
+      <button class="btn btn-ghost btn-sm" onclick="printTimetable()">🖨 Print</button>
+    </div>
+    <div id="ttInfo" style="margin-top:18px;"></div>
+  </div>
+  <!-- PROGRESS BAR JADWAL -->
+  <div id="ttProgress" style="margin-bottom:16px;"></div>
+  <!-- TIMETABLE -->
+  <div class="tt-wrap" id="ttContainer">
+    <div style="padding:60px;text-align:center;color:var(--text3);">
+      <div style="font-size:48px;margin-bottom:12px;">📅</div>
+      <p>Pilih kelas terlebih dahulu untuk melihat timetable</p>
+    </div>
+  </div>
+</div>
+
+<!-- ============== REKAP ============== -->
+<div class="page" id="page-rekap">
+  <div class="section-header">
+    <div class="section-title">
+      <div class="accent-line"></div>
+      <h2>Rekap & Laporan</h2>
+      <p>Ringkasan jadwal, beban guru, dan analisis</p>
+    </div>
+    <button class="btn btn-sky" onclick="exportAll()">⬇ Export Semua (JSON)</button>
+  </div>
+  <div class="grid-4" id="rekapStats" style="margin-bottom:24px;"></div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div class="card-title">Beban Mengajar Guru</div></div>
+      <table class="data-table">
+        <thead><tr><th>Guru</th><th>Mapel</th><th>Total Jam</th><th>Status</th></tr></thead>
+        <tbody id="rekapGuruTbody"></tbody>
+      </table>
+    </div>
+    <div class="card">
+      <div class="card-header"><div class="card-title">Status Kelengkapan Jadwal</div></div>
+      <div id="rekapKelengkapan"></div>
+    </div>
+  </div>
+  <div class="divider"></div>
+  <div class="card">
+    <div class="card-header"><div class="card-title">Ringkasan Jadwal Per Kelas</div></div>
+    <div id="rekapPerKelas"></div>
+  </div>
+</div>
+
+</div><!-- end app-shell -->
+
+<!-- ===== MODALS ===== -->
+
+<!-- Modal Jurusan -->
+<div class="overlay" id="modalJurusan">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>➕ Tambah Jurusan / Program Studi</h3>
+      <button class="modal-close" onclick="closeModal('modalJurusan')">✕</button>
+    </div>
+    <div class="form-row cols-2">
+      <div class="fg"><label>Kode Jurusan</label><input id="j_kode" placeholder="Contoh: TKJ, DPIB, AKL..."></div>
+      <div class="fg"><label>Nama Jurusan</label><input id="j_nama" placeholder="Nama lengkap jurusan..."></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Nama Lengkap / Kompetensi Keahlian</label><input id="j_namaLengkap" placeholder="Contoh: Teknik Komputer dan Jaringan..."></div>
+    </div>
+    <div class="form-row cols-2">
+      <div class="fg"><label>Bidang Keahlian</label><input id="j_bidang" placeholder="Contoh: Teknologi Informasi..."></div>
+      <div class="fg"><label>Jumlah Rombel (per tingkat)</label><input type="number" id="j_rombel" value="1" min="1" max="10"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Warna Label</label>
+        <div class="color-grid" id="cpJurusan"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalJurusan')">Batal</button>
+      <button class="btn btn-sky" onclick="saveJurusan()">💾 Simpan Jurusan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Kelas -->
+<div class="overlay" id="modalKelas">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>➕ Tambah Kelas</h3>
+      <button class="modal-close" onclick="closeModal('modalKelas')">✕</button>
+    </div>
+    <div class="form-row cols-3">
+      <div class="fg"><label>Tingkat</label>
+        <select id="k_tingkat">
+          <option value="X">Kelas X</option>
+          <option value="XI">Kelas XI</option>
+          <option value="XII">Kelas XII</option>
+          <option value="XIII">Kelas XIII</option>
+        </select>
+      </div>
+      <div class="fg"><label>Jurusan</label>
+        <select id="k_jurusan"><option value="">-- Pilih Jurusan --</option></select>
+      </div>
+      <div class="fg"><label>Rombel</label>
+        <select id="k_rombel">
+          <option value="1">Rombel 1</option>
+          <option value="2">Rombel 2</option>
+          <option value="3">Rombel 3</option>
+          <option value="4">Rombel 4</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row cols-2">
+      <div class="fg"><label>Nama Kelas (Otomatis)</label><input id="k_namaKelas" placeholder="Akan terisi otomatis..."></div>
+      <div class="fg"><label>Wali Kelas</label>
+        <select id="k_wali"><option value="">-- Pilih Wali Kelas --</option></select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Ruangan Utama</label><input id="k_ruangan" placeholder="Contoh: Ruang 12, Lab TKJ 1..."></div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalKelas')">Batal</button>
+      <button class="btn btn-sky" onclick="saveKelas()">💾 Simpan Kelas</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Mapel -->
+<div class="overlay" id="modalMapel">
+  <div class="modal wide">
+    <div class="modal-header">
+      <h3>➕ Tambah Mata Pelajaran</h3>
+      <button class="modal-close" onclick="closeModal('modalMapel')">✕</button>
+    </div>
+    <div class="form-row cols-3">
+      <div class="fg"><label>Kode Mapel</label><input id="m_kode" placeholder="Contoh: MTK, B.IND..."></div>
+      <div class="fg" style="grid-column:span 2;"><label>Nama Mata Pelajaran</label><input id="m_nama" placeholder="Nama lengkap mata pelajaran..."></div>
+    </div>
+    <div class="form-row cols-3">
+      <div class="fg"><label>Kelompok Mapel</label>
+        <select id="m_kelompok">
+          <option value="Umum">Kelompok Umum (A)</option>
+          <option value="Adaptif">Kelompok Adaptif (B)</option>
+          <option value="Produktif">Kelompok Produktif (C)</option>
+          <option value="Muatan Lokal">Muatan Lokal</option>
+          <option value="Pengembangan Diri">Pengembangan Diri</option>
+        </select>
+      </div>
+      <div class="fg"><label>Jurusan (Kosongkan = Semua)</label>
+        <select id="m_jurusan"><option value="">Semua Jurusan</option></select>
+      </div>
+      <div class="fg"><label>KKM / Nilai Minimum</label>
+        <input type="number" id="m_kkm" value="75" min="0" max="100">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Warna Label</label>
+        <div class="color-grid" id="cpMapel"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalMapel')">Batal</button>
+      <button class="btn btn-sky" onclick="saveMapel()">💾 Simpan Mapel</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Guru -->
+<div class="overlay" id="modalGuru">
+  <div class="modal wide">
+    <div class="modal-header">
+      <h3>➕ Tambah Data Guru</h3>
+      <button class="modal-close" onclick="closeModal('modalGuru')">✕</button>
+    </div>
+    <div class="form-row cols-2">
+      <div class="fg"><label>NIP / NUPTK</label><input id="g_nip" placeholder="NIP/NUPTK..."></div>
+      <div class="fg"><label>Nama Lengkap</label><input id="g_nama" placeholder="Nama guru..."></div>
+    </div>
+    <div class="form-row cols-3">
+      <div class="fg"><label>Status</label>
+        <select id="g_status">
+          <option value="PNS">PNS</option>
+          <option value="PPPK">P3K/PPPK</option>
+          <option value="GTT">GTT/Honor</option>
+          <option value="Kontrak">Kontrak</option>
+        </select>
+      </div>
+      <div class="fg"><label>Maks Jam Mengajar/Minggu</label>
+        <input type="number" id="g_maxJam" value="24" min="1" max="40">
+      </div>
+      <div class="fg"><label>No. HP</label><input id="g_hp" placeholder="08..."></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Mapel yang Diampu (bisa pilih banyak)</label>
+        <div id="guruMapelCheckbox" style="display:flex;flex-wrap:wrap;gap:8px;margin-top:6px;max-height:140px;overflow-y:auto;padding:10px;background:var(--panel2);border-radius:var(--radius-sm);border:1px solid var(--border);"></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalGuru')">Batal</button>
+      <button class="btn btn-sky" onclick="saveGuru()">💾 Simpan Guru</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Jam -->
+<div class="overlay" id="modalJam">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>➕ Tambah Slot Waktu</h3>
+      <button class="modal-close" onclick="closeModal('modalJam')">✕</button>
+    </div>
+    <div class="form-row cols-3">
+      <div class="fg"><label>Jam Ke-</label><input type="number" id="jam_no" placeholder="1,2,3..."></div>
+      <div class="fg"><label>Mulai</label><input type="time" id="jam_mulai"></div>
+      <div class="fg"><label>Selesai</label><input type="time" id="jam_selesai"></div>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Tipe</label>
+        <select id="jam_tipe">
+          <option value="jp">Jam Pelajaran</option>
+          <option value="istirahat">Istirahat</option>
+        </select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalJam')">Batal</button>
+      <button class="btn btn-sky" onclick="saveJam()">💾 Simpan</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Assign -->
+<div class="overlay" id="modalAssign">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>➕ Assign Mapel ke Kelas</h3>
+      <button class="modal-close" onclick="closeModal('modalAssign')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Mata Pelajaran</label>
+        <select id="as_mapel"><option value="">-- Pilih Mapel --</option></select>
+      </div>
+    </div>
+    <div class="form-row cols-2">
+      <div class="fg"><label>Guru Pengampu</label>
+        <select id="as_guru"><option value="">-- Pilih Guru --</option></select>
+      </div>
+      <div class="fg"><label>Jam Per Minggu</label>
+        <input type="number" id="as_jam" value="2" min="1" max="10">
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalAssign')">Batal</button>
+      <button class="btn btn-sky" onclick="saveAssign()">💾 Assign</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Jadwal Tambah -->
+<div class="overlay" id="modalJadwal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modalJadwalTitle">📅 Tambah Jadwal</h3>
+      <button class="modal-close" onclick="closeModal('modalJadwal')">✕</button>
+    </div>
+    <div id="modalJadwalInfo" style="padding:10px 14px;background:var(--panel2);border-radius:var(--radius-sm);margin-bottom:16px;font-size:13px;color:var(--text2);"></div>
+    <div class="form-row">
+      <div class="fg"><label>Mata Pelajaran</label>
+        <select id="jd_mapel" onchange="autoFillGuruFromMapel()"><option value="">-- Pilih Mapel --</option></select>
+      </div>
+    </div>
+    <div class="form-row cols-2">
+      <div class="fg"><label>Guru</label>
+        <select id="jd_guru"><option value="">-- Pilih Guru --</option></select>
+      </div>
+      <div class="fg"><label>Ruangan</label>
+        <input id="jd_room" placeholder="Contoh: R.12, Lab...">
+      </div>
+    </div>
+    <div id="jd_warning" style="display:none;padding:10px;background:rgba(244,63,94,0.1);border:1px solid rgba(244,63,94,0.2);border-radius:8px;font-size:12px;color:var(--rose);margin-top:8px;"></div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalJadwal')">Batal</button>
+      <button class="btn btn-sky" onclick="saveJadwal()">💾 Simpan Jadwal</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Import -->
+<div class="overlay" id="modalImport">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>⬆️ Import Data JSON</h3>
+      <button class="modal-close" onclick="closeModal('modalImport')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Paste JSON atau Upload File</label>
+        <textarea id="importRaw" rows="8" placeholder='Paste JSON data...&#10;{"sekolah":{...},"jurusan":[...],"kelas":[...],...}'></textarea>
+      </div>
+    </div>
+    <div style="margin-bottom:14px;">
+      <input type="file" id="importFile" accept=".json" onchange="readImportFile()" style="display:none;">
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('importFile').click()">📁 Upload File JSON</button>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalImport')">Batal</button>
+      <button class="btn btn-sky" onclick="doImport()">Import Data</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Copy Assign -->
+<div class="overlay" id="modalCopyAssign">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>📋 Salin Assign dari Kelas Lain</h3>
+      <button class="modal-close" onclick="closeModal('modalCopyAssign')">✕</button>
+    </div>
+    <div class="form-row">
+      <div class="fg"><label>Pilih Kelas Sumber</label>
+        <select id="copyFromKelas"><option value="">-- Pilih Kelas --</option></select>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modalCopyAssign')">Batal</button>
+      <button class="btn btn-sky" onclick="doCopyAssign()">Salin</button>
+    </div>
+  </div>
+</div>
+
+<!-- TOAST -->
+<div class="toast-container" id="toastContainer"></div>
+
+<!-- ===== JAVASCRIPT ===== -->
+<script>
+// ================ DATA STORE ================
+const KEY = 'bbschedapp_v3';
+let DB = {
+  sekolah: {
+    nama: 'UPTD SMKN 1 Sumarorong',
+    npsn: '',
+    kepsek: '',
+    tp: '2025/2026',
+    semester: 'Ganjil',
+    alamat: 'Sumarorong, Mamasa, Sulawesi Barat',
+    hari: '6',
+    kurikulum: 'Merdeka'
+  },
+  jurusan: [],
+  kelas: [],
+  mapel: [],
+  guru: [],
+  jamPelajaran: [],
+  assignMapel: {},   // { kelasId: [{mapelId, guruId, jamPerMinggu}] }
+  jadwal: {}         // { kelasId: { 'Senin-0': {mapelId,guruId,room}, ... } }
+};
+
+function loadDB() {
+  const raw = localStorage.getItem(KEY);
+  if (raw) { try { DB = JSON.parse(raw); } catch(e) {} }
+}
+function saveDB() { localStorage.setItem(KEY, JSON.stringify(DB)); }
+loadDB();
+
+// ================ COLORS ================
+const COLORS = [
+  '#38bdf8','#3b82f6','#6366f1','#8b5cf6','#a855f7',
+  '#ec4899','#f43f5e','#f97316','#f59e0b','#eab308',
+  '#84cc16','#22c55e','#10b981','#14b8a6','#06b6d4',
+  '#0ea5e9','#64748b','#475569'
+];
+let selectedColors = { cpJurusan: COLORS[0], cpMapel: COLORS[0] };
+
+function buildColorPicker(containerId, varKey) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = '';
+  COLORS.forEach((c,i) => {
+    const d = document.createElement('div');
+    d.className = 'cpick' + (i===0?' sel':'');
+    d.style.background = c;
+    d.onclick = () => {
+      el.querySelectorAll('.cpick').forEach(x=>x.classList.remove('sel'));
+      d.classList.add('sel'); selectedColors[varKey] = c;
+    };
+    el.appendChild(d);
+  });
+  selectedColors[varKey] = COLORS[0];
+}
+
+// ================ PAGES ================
+function goPage(p) {
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+p).classList.add('active');
+  document.getElementById('tab-'+p).classList.add('active');
+  if (p==='dashboard') renderDashboard();
+  if (p==='jadwal') refreshTTKelasSelect();
+  if (p==='rekap') renderRekap();
+}
+
+function openModal(id) {
+  const m = document.getElementById(id);
+  m.classList.add('open');
+  if (id==='modalJurusan') buildColorPicker('cpJurusan','cpJurusan');
+  if (id==='modalMapel') { buildColorPicker('cpMapel','cpMapel'); fillMapelJurusan(); }
+  if (id==='modalKelas') { fillKelasJurusan(); fillKelasWali(); updateKelasName(); }
+  if (id==='modalGuru') fillGuruMapelCheck();
+  if (id==='modalAssign') { fillAssignMapel(); fillAssignGuru(); }
+}
+function closeModal(id) { document.getElementById(id).classList.remove('open'); }
+
+document.querySelectorAll('.overlay').forEach(o => {
+  o.addEventListener('click', e => { if(e.target===o) o.classList.remove('open'); });
+});
+
+// ================ TOAST ================
+function toast(msg, sub='', type='success') {
+  const icons = {success:'✅',error:'❌',warning:'⚠️',info:'ℹ️'};
+  const t = document.createElement('div');
+  t.className = `toast ${type}`;
+  t.innerHTML = `<div class="toast-ico">${icons[type]||'ℹ️'}</div>
+    <div class="toast-body"><div class="toast-title">${msg}</div>${sub?`<div class="toast-sub">${sub}</div>`:''}</div>`;
+  document.getElementById('toastContainer').appendChild(t);
+  requestAnimationFrame(()=>{ setTimeout(()=>t.classList.add('show'),10); });
+  setTimeout(()=>{t.classList.remove('show');setTimeout(()=>t.remove(),400);},3500);
+}
+
+// ================ SETUP WIZARD ================
+let currentSetupTab = 1;
+function goSetupTab(n) {
+  document.querySelectorAll('.setup-panel').forEach((p,i)=>{
+    p.style.display = i+1===n ? 'block' : 'none';
+  });
+  document.querySelectorAll('.wstep').forEach((s,i)=>{
+    s.classList.remove('active','done');
+    if (i+1===n) s.classList.add('active');
+    else if (i+1<n) s.classList.add('done');
+  });
+  currentSetupTab = n;
+  if (n===3) { renderKelas(); }
+  if (n===4) { renderMapel(); }
+  if (n===5) { renderGuru(); fillGuruMapelFilter(); }
+  if (n===6) { renderJam(); }
+  if (n===7) { fillAssignKelasSelect(); renderAssign(); }
+}
+
+// ================ STEP 1: SEKOLAH ================
+function saveSekolah() {
+  DB.sekolah = {
+    nama: document.getElementById('s_namaSekolah').value,
+    npsn: document.getElementById('s_npsn').value,
+    kepsek: document.getElementById('s_kepsek').value,
+    tp: document.getElementById('s_tp').value,
+    semester: document.getElementById('s_semester').value,
+    alamat: document.getElementById('s_alamat').value,
+    hari: document.getElementById('s_hari').value,
+    kurikulum: document.getElementById('s_kur').value
+  };
+  saveDB(); toast('Info sekolah tersimpan!','Data berhasil diperbarui');
+  goSetupTab(2);
+}
+
+// ================ STEP 2: JURUSAN ================
+function saveJurusan() {
+  const kode = document.getElementById('j_kode').value.trim();
+  const nama = document.getElementById('j_nama').value.trim();
+  if (!kode||!nama) { toast('Isi kode dan nama jurusan!','','error'); return; }
+  DB.jurusan.push({
+    id: 'jur_'+Date.now(),
+    kode, nama,
+    namaLengkap: document.getElementById('j_namaLengkap').value,
+    bidang: document.getElementById('j_bidang').value,
+    rombel: parseInt(document.getElementById('j_rombel').value)||1,
+    color: selectedColors.cpJurusan
+  });
+  saveDB(); closeModal('modalJurusan'); renderJurusan();
+  toast(`Jurusan ${nama} ditambahkan!`);
+  clearInputs(['j_kode','j_nama','j_namaLengkap','j_bidang']);
+}
+function renderJurusan() {
+  const g = document.getElementById('jurusanGrid');
+  if (!DB.jurusan.length) {
+    g.innerHTML = `<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3);">
+      <div style="font-size:48px;margin-bottom:12px;">🏫</div><p>Belum ada jurusan. Klik tombol "Tambah Jurusan".</p></div>`;
+    return;
+  }
+  g.innerHTML = DB.jurusan.map((j,i) => `
+    <div class="card" style="border-left:4px solid ${j.color};">
+      <div style="display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:12px;">
+        <div>
+          <span class="badge badge-sky" style="background:${j.color}22;color:${j.color};">${j.kode}</span>
+        </div>
+        <button class="btn btn-danger btn-xs" onclick="delJurusan('${j.id}')">✕</button>
+      </div>
+      <div style="font-size:15px;font-weight:800;margin-bottom:4px;">${j.nama}</div>
+      <div style="font-size:12px;color:var(--text3);margin-bottom:10px;">${j.namaLengkap||j.nama}</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <span class="tag">📐 ${j.bidang||'—'}</span>
+        <span class="tag">👥 ${j.rombel} Rombel/Tingkat</span>
+      </div>
+    </div>
+  `).join('');
+}
+function delJurusan(id) {
+  if (!confirm('Hapus jurusan ini?')) return;
+  DB.jurusan = DB.jurusan.filter(j=>j.id!==id);
+  saveDB(); renderJurusan();
+}
+
+// ================ STEP 3: KELAS ================
+function fillKelasJurusan() {
+  const s = document.getElementById('k_jurusan');
+  s.innerHTML = '<option value="">-- Pilih Jurusan --</option>';
+  DB.jurusan.forEach(j=>s.innerHTML+=`<option value="${j.id}">${j.kode} - ${j.nama}</option>`);
+}
+function fillKelasWali() {
+  const s = document.getElementById('k_wali');
+  s.innerHTML = '<option value="">-- Pilih Wali Kelas --</option>';
+  DB.guru.forEach(g=>s.innerHTML+=`<option value="${g.id}">${g.nama}</option>`);
+}
+function updateKelasName() {
+  const t = document.getElementById('k_tingkat').value;
+  const jId = document.getElementById('k_jurusan').value;
+  const r = document.getElementById('k_rombel').value;
+  const j = DB.jurusan.find(x=>x.id===jId);
+  if (j) document.getElementById('k_namaKelas').value = `${t} ${j.kode} ${r}`;
+}
+['k_tingkat','k_jurusan','k_rombel'].forEach(id=>{
+  document.getElementById(id).addEventListener('change', updateKelasName);
+});
+function saveKelas() {
+  const jId = document.getElementById('k_jurusan').value;
+  const j = DB.jurusan.find(x=>x.id===jId);
+  const nama = document.getElementById('k_namaKelas').value.trim();
+  if (!nama||!jId) { toast('Pilih jurusan!','','error'); return; }
+  DB.kelas.push({
+    id: 'kls_'+Date.now(),
+    nama,
+    tingkat: document.getElementById('k_tingkat').value,
+    jurusanId: jId,
+    jurusanKode: j?j.kode:'',
+    rombel: document.getElementById('k_rombel').value,
+    waliId: document.getElementById('k_wali').value,
+    ruangan: document.getElementById('k_ruangan').value
+  });
+  saveDB(); closeModal('modalKelas'); renderKelas();
+  toast(`Kelas ${nama} ditambahkan!`);
+}
+function generateKelas() {
+  if (!DB.jurusan.length) { toast('Tambah jurusan dulu!','','error'); return; }
+  const tingkats = ['X','XI','XII'];
+  let added = 0;
+  DB.jurusan.forEach(j => {
+    tingkats.forEach(t => {
+      for (let r=1;r<=j.rombel;r++) {
+        const nama = `${t} ${j.kode} ${r}`;
+        if (!DB.kelas.find(k=>k.nama===nama)) {
+          DB.kelas.push({
+            id:'kls_'+Date.now()+Math.random().toString(36).slice(2),
+            nama, tingkat:t, jurusanId:j.id, jurusanKode:j.kode,
+            rombel:r.toString(), waliId:'', ruangan:''
+          });
+          added++;
+        }
+      }
+    });
+  });
+  saveDB(); renderKelas(); toast(`${added} kelas berhasil di-generate!`, `Total: ${DB.kelas.length} kelas`);
+}
+function renderKelas() {
+  const q = document.getElementById('searchKelas').value.toLowerCase();
+  const ft = document.getElementById('filterTingkat').value;
+  const fj = document.getElementById('filterJurusanKelas').value;
+  let data = DB.kelas.filter(k =>
+    (!q || k.nama.toLowerCase().includes(q)) &&
+    (!ft || k.tingkat===ft) &&
+    (!fj || k.jurusanId===fj)
+  );
+  // Update filter jurusan options
+  const fjEl = document.getElementById('filterJurusanKelas');
+  const curFJ = fjEl.value;
+  fjEl.innerHTML = '<option value="">Semua Jurusan</option>';
+  DB.jurusan.forEach(j=>fjEl.innerHTML+=`<option value="${j.id}">${j.kode} - ${j.nama}</option>`);
+  fjEl.value = curFJ;
+
+  const tb = document.getElementById('kelasTbody');
+  if (!data.length) { tb.innerHTML='<tr class="empty-row"><td colspan="7">Tidak ada kelas.</td></tr>'; return; }
+  tb.innerHTML = data.map((k,i) => {
+    const j = DB.jurusan.find(x=>x.id===k.jurusanId);
+    const w = DB.guru.find(x=>x.id===k.waliId);
+    return `<tr>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);">${i+1}</td>
+      <td style="font-weight:700;">${k.nama}</td>
+      <td><span class="badge badge-indigo">${k.tingkat}</span></td>
+      <td>${j?`<span class="badge" style="background:${j.color}22;color:${j.color};">${j.kode}</span>`:'—'}</td>
+      <td>${k.rombel}</td>
+      <td style="font-size:12px;color:var(--text2);">${w?w.nama:'—'}</td>
+      <td><button class="btn btn-danger btn-xs" onclick="delKelas('${k.id}')">✕ Hapus</button></td>
+    </tr>`;
+  }).join('');
+}
+function delKelas(id) {
+  if (!confirm('Hapus kelas ini?')) return;
+  DB.kelas = DB.kelas.filter(k=>k.id!==id);
+  delete DB.assignMapel[id];
+  delete DB.jadwal[id];
+  saveDB(); renderKelas();
+}
+
+// ================ STEP 4: MAPEL ================
+const MAPEL_DEFAULT = [
+  {kode:'PAI',nama:'Pendidikan Agama & Budi Pekerti',kelompok:'Umum',color:'#f59e0b'},
+  {kode:'PPKN',nama:'Pendidikan Pancasila & Kewarganegaraan',kelompok:'Umum',color:'#f43f5e'},
+  {kode:'B.IND',nama:'Bahasa Indonesia',kelompok:'Umum',color:'#3b82f6'},
+  {kode:'SEJAR',nama:'Sejarah Indonesia',kelompok:'Umum',color:'#8b5cf6'},
+  {kode:'B.ING',nama:'Bahasa Inggris',kelompok:'Adaptif',color:'#06b6d4'},
+  {kode:'MTK',nama:'Matematika',kelompok:'Adaptif',color:'#10b981'},
+  {kode:'FISIKA',nama:'Fisika',kelompok:'Adaptif',color:'#0ea5e9'},
+  {kode:'KIMIA',nama:'Kimia',kelompok:'Adaptif',color:'#6366f1'},
+  {kode:'BIOL',nama:'Biologi',kelompok:'Adaptif',color:'#22c55e'},
+  {kode:'PJOK',nama:'Pendidikan Jasmani, Olahraga & Kesehatan',kelompok:'Umum',color:'#f97316'},
+  {kode:'SENBUD',nama:'Seni Budaya',kelompok:'Umum',color:'#ec4899'},
+  {kode:'SIM',nama:'Simulasi & Komunikasi Digital',kelompok:'Adaptif',color:'#38bdf8'},
+  {kode:'EKON',nama:'Ekonomi',kelompok:'Adaptif',color:'#84cc16'},
+  {kode:'MULOK',nama:'Muatan Lokal',kelompok:'Muatan Lokal',color:'#64748b'},
+  {kode:'BK',nama:'Bimbingan Konseling',kelompok:'Pengembangan Diri',color:'#475569'},
+  {kode:'PKK',nama:'Produk Kreatif & Kewirausahaan',kelompok:'Produktif',color:'#a855f7'},
+];
+function importMapelDefault() {
+  let added = 0;
+  MAPEL_DEFAULT.forEach(m => {
+    if (!DB.mapel.find(x=>x.kode===m.kode)) {
+      DB.mapel.push({id:'mp_'+Date.now()+Math.random().toString(36).slice(2),...m,jurusanId:'',kkm:75});
+      added++;
+    }
+  });
+  saveDB(); renderMapel(); toast(`${added} mapel default diimport!`, 'Tambahkan mapel produktif secara manual');
+}
+function fillMapelJurusan() {
+  const s = document.getElementById('m_jurusan');
+  s.innerHTML = '<option value="">Semua Jurusan</option>';
+  DB.jurusan.forEach(j=>s.innerHTML+=`<option value="${j.id}">${j.kode} - ${j.nama}</option>`);
+}
+function saveMapel() {
+  const kode = document.getElementById('m_kode').value.trim();
+  const nama = document.getElementById('m_nama').value.trim();
+  if (!kode||!nama) { toast('Isi kode dan nama mapel!','','error'); return; }
+  DB.mapel.push({
+    id:'mp_'+Date.now(),kode,nama,
+    kelompok:document.getElementById('m_kelompok').value,
+    jurusanId:document.getElementById('m_jurusan').value,
+    kkm:parseInt(document.getElementById('m_kkm').value)||75,
+    color:selectedColors.cpMapel
+  });
+  saveDB(); closeModal('modalMapel'); renderMapel();
+  toast(`Mapel ${nama} ditambahkan!`);
+  clearInputs(['m_kode','m_nama']);
+}
+function renderMapel() {
+  const q = document.getElementById('searchMapel').value.toLowerCase();
+  const fk = document.getElementById('filterKelMapel').value;
+  const data = DB.mapel.filter(m=>
+    (!q||m.nama.toLowerCase().includes(q)||m.kode.toLowerCase().includes(q))&&
+    (!fk||m.kelompok===fk)
+  );
+  document.getElementById('mapelCount').textContent = DB.mapel.length+' mapel terdaftar';
+  const tb = document.getElementById('mapelTbody');
+  if (!data.length) { tb.innerHTML='<tr class="empty-row"><td colspan="7">Tidak ada mapel.</td></tr>'; return; }
+  tb.innerHTML = data.map((m,i) => {
+    const j = DB.jurusan.find(x=>x.id===m.jurusanId);
+    const klBadge = {Umum:'badge-sky',Adaptif:'badge-indigo',Produktif:'badge-violet',
+      'Muatan Lokal':'badge-amber','Pengembangan Diri':'badge-emerald'};
+    return `<tr>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);">${i+1}</td>
+      <td><span class="badge badge-sky" style="font-family:'JetBrains Mono',monospace;">${m.kode}</span></td>
+      <td style="font-weight:600;">${m.nama}</td>
+      <td><span class="badge ${klBadge[m.kelompok]||'badge-sky'}">${m.kelompok}</span></td>
+      <td style="font-size:12px;">${j?j.kode:'Semua'}</td>
+      <td><div style="width:20px;height:20px;border-radius:5px;background:${m.color};"></div></td>
+      <td><button class="btn btn-danger btn-xs" onclick="delMapel('${m.id}')">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+function delMapel(id) {
+  if (!confirm('Hapus mapel ini?')) return;
+  DB.mapel = DB.mapel.filter(m=>m.id!==id);
+  saveDB(); renderMapel();
+}
+
+// ================ STEP 5: GURU ================
+function fillGuruMapelCheck() {
+  const el = document.getElementById('guruMapelCheckbox');
+  el.innerHTML = DB.mapel.map(m=>`
+    <label style="display:flex;align-items:center;gap:6px;padding:5px 10px;background:var(--panel3);border-radius:6px;cursor:pointer;font-size:12px;">
+      <input type="checkbox" name="guruMapel" value="${m.id}" style="width:auto;accent-color:var(--sky);">
+      <span style="width:8px;height:8px;border-radius:2px;background:${m.color};"></span>
+      ${m.kode} - ${m.nama}
+    </label>
+  `).join('');
+}
+function fillGuruMapelFilter() {
+  const s = document.getElementById('filterGuruMapel');
+  s.innerHTML = '<option value="">Semua Mapel</option>';
+  DB.mapel.forEach(m=>s.innerHTML+=`<option value="${m.id}">${m.kode} - ${m.nama}</option>`);
+}
+function saveGuru() {
+  const nama = document.getElementById('g_nama').value.trim();
+  if (!nama) { toast('Nama guru wajib diisi!','','error'); return; }
+  const mapelIds = [...document.querySelectorAll('input[name="guruMapel"]:checked')].map(x=>x.value);
+  DB.guru.push({
+    id:'gru_'+Date.now(),
+    nip:document.getElementById('g_nip').value,
+    nama,
+    status:document.getElementById('g_status').value,
+    maxJam:parseInt(document.getElementById('g_maxJam').value)||24,
+    hp:document.getElementById('g_hp').value,
+    mapelIds
+  });
+  saveDB(); closeModal('modalGuru'); renderGuru(); fillGuruMapelFilter();
+  toast(`Guru ${nama} ditambahkan!`);
+}
+function renderGuru() {
+  const q = document.getElementById('searchGuru').value.toLowerCase();
+  const fm = document.getElementById('filterGuruMapel').value;
+  const data = DB.guru.filter(g=>
+    (!q||g.nama.toLowerCase().includes(q)||g.nip.includes(q))&&
+    (!fm||g.mapelIds.includes(fm))
+  );
+  const tb = document.getElementById('guruTbody');
+  if (!data.length) { tb.innerHTML='<tr class="empty-row"><td colspan="7">Belum ada guru.</td></tr>'; return; }
+  tb.innerHTML = data.map((g,i) => {
+    const mapelNames = g.mapelIds.map(id=>{const m=DB.mapel.find(x=>x.id===id);return m?`<span class="tag" style="font-size:10px;">${m.kode}</span>`:'';}).join(' ');
+    const sudahJam = countGuruJam(g.id);
+    const pct = Math.min(100,Math.round(sudahJam/g.maxJam*100));
+    return `<tr>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);">${i+1}</td>
+      <td style="font-family:'JetBrains Mono',monospace;font-size:11px;">${g.nip||'—'}</td>
+      <td style="font-weight:700;">${g.nama}<br><span class="badge ${g.status==='PNS'?'badge-emerald':g.status==='PPPK'?'badge-sky':'badge-amber'}" style="font-size:9px;margin-top:3px;">${g.status}</span></td>
+      <td style="max-width:200px;">${mapelNames||'—'}</td>
+      <td>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;margin-bottom:4px;">${g.maxJam} jam</div>
+      </td>
+      <td>
+        <div style="font-family:'JetBrains Mono',monospace;font-size:13px;color:${sudahJam>g.maxJam?'var(--rose)':sudahJam>=g.maxJam*0.8?'var(--amber)':'var(--emerald)'};">${sudahJam}/${g.maxJam}</div>
+        <div class="progress-bar-wrap" style="margin-top:4px;width:80px;"><div class="progress-bar" style="width:${pct}%;background:${sudahJam>g.maxJam?'var(--rose)':sudahJam>=g.maxJam*0.8?'var(--amber)':'linear-gradient(90deg,var(--sky),var(--indigo))'}"></div></div>
+      </td>
+      <td><button class="btn btn-danger btn-xs" onclick="delGuru('${g.id}')">✕</button></td>
+    </tr>`;
+  }).join('');
+}
+function countGuruJam(guruId) {
+  let total = 0;
+  Object.values(DB.jadwal).forEach(kj=>{
+    Object.values(kj).forEach(slot=>{ if(slot.guruId===guruId) total++; });
+  });
+  return total;
+}
+function delGuru(id) {
+  if (!confirm('Hapus guru ini?')) return;
+  DB.guru = DB.guru.filter(g=>g.id!==id);
+  saveDB(); renderGuru();
+}
+
+// ================ STEP 6: JAM PELAJARAN ================
+function generateJamDefault() {
+  DB.jamPelajaran = [
+    {no:1,mulai:'07.00',selesai:'07.45',tipe:'jp'},
+    {no:2,mulai:'07.45',selesai:'08.30',tipe:'jp'},
+    {no:3,mulai:'08.30',selesai:'09.15',tipe:'jp'},
+    {no:4,mulai:'09.15',selesai:'10.00',tipe:'jp'},
+    {no:'',mulai:'10.00',selesai:'10.15',tipe:'istirahat'},
+    {no:5,mulai:'10.15',selesai:'11.00',tipe:'jp'},
+    {no:6,mulai:'11.00',selesai:'11.45',tipe:'jp'},
+    {no:7,mulai:'11.45',selesai:'12.30',tipe:'jp'},
+    {no:'',mulai:'12.30',selesai:'13.00',tipe:'istirahat'},
+    {no:8,mulai:'13.00',selesai:'13.45',tipe:'jp'},
+    {no:9,mulai:'13.45',selesai:'14.30',tipe:'jp'},
+    {no:10,mulai:'14.30',selesai:'15.15',tipe:'jp'},
+  ];
+  saveDB(); renderJam(); toast('Jam pelajaran default (10 JP) diterapkan!');
+}
+function generateJamOtomatis() {
+  const mulai = document.getElementById('jamMulai').value;
+  const dur = parseInt(document.getElementById('durJP').value)||45;
+  const jml = parseInt(document.getElementById('jmlJP').value)||10;
+  const istSetelah = document.getElementById('istirahatSetelah').value.split(',').map(x=>parseInt(x.trim())).filter(Boolean);
+  const durIst = parseInt(document.getElementById('durIstirahat').value)||15;
+  DB.jamPelajaran = [];
+  let [h,m] = mulai.split(':').map(Number);
+  let jpNo = 1;
+  for (let i=1;i<=jml;i++) {
+    const endH = Math.floor((h*60+m+dur)/60), endM = (h*60+m+dur)%60;
+    DB.jamPelajaran.push({
+      no:jpNo,
+      mulai:`${String(h).padStart(2,'0')}.${String(m).padStart(2,'0')}`,
+      selesai:`${String(endH).padStart(2,'0')}.${String(endM).padStart(2,'0')}`,
+      tipe:'jp'
+    });
+    jpNo++; h=endH; m=endM;
+    if (istSetelah.includes(i)) {
+      const ih=Math.floor((h*60+m+durIst)/60), im=(h*60+m+durIst)%60;
+      DB.jamPelajaran.push({
+        no:'',
+        mulai:`${String(h).padStart(2,'0')}.${String(m).padStart(2,'0')}`,
+        selesai:`${String(ih).padStart(2,'0')}.${String(im).padStart(2,'0')}`,
+        tipe:'istirahat'
+      });
+      h=ih; m=im;
+    }
+  }
+  saveDB(); renderJam(); toast(`${jml} jam pelajaran + ${istSetelah.length} istirahat dibuat!`);
+}
+function saveJam() {
+  DB.jamPelajaran.push({
+    no:parseInt(document.getElementById('jam_no').value),
+    mulai:document.getElementById('jam_mulai').value.replace(':','.'),
+    selesai:document.getElementById('jam_selesai').value.replace(':','.'),
+    tipe:document.getElementById('jam_tipe').value
+  });
+  DB.jamPelajaran.sort((a,b)=>(a.mulai>b.mulai?1:-1));
+  saveDB(); closeModal('modalJam'); renderJam();
+}
+function renderJam() {
+  const el = document.getElementById('jamList');
+  if (!DB.jamPelajaran.length) {
+    el.innerHTML = '<div class="card"><div style="text-align:center;color:var(--text3);padding:20px;font-size:13px;">Belum ada jam pelajaran. Klik "Generate Otomatis".</div></div>';
+    return;
+  }
+  el.innerHTML = DB.jamPelajaran.map((j,i) => {
+    const isIst = j.tipe==='istirahat';
+    return `<div class="jam-row ${isIst?'istirahat-row':''}">
+      <div class="jam-num">${isIst?'☕':j.no}</div>
+      <div class="jam-time">${j.mulai} – ${j.selesai}</div>
+      <div class="jam-type">${isIst?'<span class="badge badge-amber">Istirahat</span>':'<span class="badge badge-sky">Jam Ke-'+j.no+'</span>'}</div>
+      <button class="btn btn-danger btn-xs" onclick="delJam(${i})">✕</button>
+    </div>`;
+  }).join('');
+}
+function delJam(i) { DB.jamPelajaran.splice(i,1); saveDB(); renderJam(); }
+
+// ================ STEP 7: ASSIGN ================
+function fillAssignKelasSelect() {
+  const s = document.getElementById('assignKelas');
+  const cur = s.value;
+  s.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+  DB.kelas.forEach(k=>s.innerHTML+=`<option value="${k.id}">${k.nama}</option>`);
+  s.value = cur;
+}
+function fillAssignMapel() {
+  const s = document.getElementById('as_mapel');
+  s.innerHTML = '<option value="">-- Pilih Mapel --</option>';
+  DB.mapel.forEach(m=>s.innerHTML+=`<option value="${m.id}">[${m.kode}] ${m.nama}</option>`);
+}
+function fillAssignGuru() {
+  const s = document.getElementById('as_guru');
+  s.innerHTML = '<option value="">-- Pilih Guru --</option>';
+  DB.guru.forEach(g=>s.innerHTML+=`<option value="${g.id}">${g.nama}</option>`);
+}
+function saveAssign() {
+  const kId = document.getElementById('assignKelas').value;
+  const mId = document.getElementById('as_mapel').value;
+  const gId = document.getElementById('as_guru').value;
+  const jam = parseInt(document.getElementById('as_jam').value)||2;
+  if (!kId||!mId) { toast('Pilih kelas dan mapel!','','error'); return; }
+  if (!DB.assignMapel[kId]) DB.assignMapel[kId]=[];
+  if (DB.assignMapel[kId].find(x=>x.mapelId===mId)) { toast('Mapel sudah di-assign ke kelas ini!','','warning'); return; }
+  DB.assignMapel[kId].push({mapelId:mId,guruId:gId,jamPerMinggu:jam});
+  saveDB(); closeModal('modalAssign'); renderAssign();
+  const m=DB.mapel.find(x=>x.id===mId);
+  toast(`${m?m.nama:'Mapel'} di-assign!`,`${jam} jam/minggu`);
+}
+function renderAssign() {
+  const kId = document.getElementById('assignKelas').value;
+  if (!kId) { document.getElementById('assignTable').innerHTML='<div style="text-align:center;color:var(--text3);padding:20px;">Pilih kelas terlebih dahulu</div>'; document.getElementById('totalJamAssign').textContent='—'; return; }
+  const assigns = DB.assignMapel[kId]||[];
+  const total = assigns.reduce((s,a)=>s+a.jamPerMinggu,0);
+  document.getElementById('totalJamAssign').textContent = total+' jam/minggu';
+  if (!assigns.length) {
+    document.getElementById('assignTable').innerHTML = '<div style="text-align:center;color:var(--text3);padding:30px;font-size:13px;">Belum ada mapel di-assign ke kelas ini.</div>';
+    return;
+  }
+  document.getElementById('assignTable').innerHTML = `
+    <table class="data-table">
+      <thead><tr><th>#</th><th>Kode</th><th>Nama Mapel</th><th>Kelompok</th><th>Guru</th><th>Jam/Minggu</th><th>Aksi</th></tr></thead>
+      <tbody>${assigns.map((a,i)=>{
+        const m=DB.mapel.find(x=>x.id===a.mapelId);
+        const g=DB.guru.find(x=>x.id===a.guruId);
+        return `<tr>
+          <td style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);">${i+1}</td>
+          <td>${m?`<span class="badge badge-sky" style="font-family:'JetBrains Mono',monospace;background:${m.color}22;color:${m.color};">${m.kode}</span>`:'—'}</td>
+          <td style="font-weight:600;">${m?m.nama:'—'}</td>
+          <td>${m?`<span class="tag" style="font-size:10px;">${m.kelompok}</span>`:'—'}</td>
+          <td style="font-size:12px;">${g?g.nama:'—'}</td>
+          <td>
+            <input type="number" value="${a.jamPerMinggu}" min="1" max="12" style="width:60px;padding:4px 8px;font-size:12px;"
+              onchange="updateAssignJam('${kId}','${a.mapelId}',this.value)">
+          </td>
+          <td><button class="btn btn-danger btn-xs" onclick="delAssign('${kId}','${a.mapelId}')">✕</button></td>
+        </tr>`;
+      }).join('')}</tbody>
+    </table>`;
+}
+function updateAssignJam(kId,mId,val) {
+  const a = DB.assignMapel[kId]?.find(x=>x.mapelId===mId);
+  if (a) { a.jamPerMinggu=parseInt(val)||1; saveDB(); renderAssign(); }
+}
+function delAssign(kId,mId) {
+  DB.assignMapel[kId] = DB.assignMapel[kId].filter(x=>x.mapelId!==mId);
+  saveDB(); renderAssign();
+}
+function copyAssignFromKelas() { openModal('modalCopyAssign'); fillCopyFromKelas(); }
+function fillCopyFromKelas() {
+  const kId = document.getElementById('assignKelas').value;
+  const s = document.getElementById('copyFromKelas');
+  s.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+  DB.kelas.filter(k=>k.id!==kId).forEach(k=>s.innerHTML+=`<option value="${k.id}">${k.nama}</option>`);
+}
+function doCopyAssign() {
+  const toKId = document.getElementById('assignKelas').value;
+  const fromKId = document.getElementById('copyFromKelas').value;
+  if (!fromKId||!toKId) { toast('Pilih kelas!','','error'); return; }
+  DB.assignMapel[toKId] = JSON.parse(JSON.stringify(DB.assignMapel[fromKId]||[]));
+  saveDB(); closeModal('modalCopyAssign'); renderAssign();
+  const fromK = DB.kelas.find(x=>x.id===fromKId);
+  toast(`Assign disalin dari ${fromK?fromK.nama:'kelas lain'}!`, `${DB.assignMapel[toKId].length} mapel`);
+}
+
+// ================ TIMETABLE ================
+const HARI_LIST = ['Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+let pendingSlot = null;
+
+function refreshTTKelasSelect() {
+  const s = document.getElementById('ttKelas');
+  const cur = s.value;
+  s.innerHTML = '<option value="">-- Pilih Kelas --</option>';
+  // Group by tingkat
+  const tingkats = [...new Set(DB.kelas.map(k=>k.tingkat))].sort();
+  tingkats.forEach(t=>{
+    const opt = document.createElement('optgroup');
+    opt.label = 'Kelas '+t;
+    DB.kelas.filter(k=>k.tingkat===t).forEach(k=>{
+      const o = document.createElement('option');
+      o.value=k.id; o.textContent=k.nama;
+      opt.appendChild(o);
+    });
+    s.appendChild(opt);
+  });
+  if (cur) s.value=cur;
+}
+
+function getHariCount() { return parseInt(DB.sekolah.hari)||6; }
+function getHaris() { return HARI_LIST.slice(0,getHariCount()); }
+function getJPOnly() { return DB.jamPelajaran.filter(j=>j.tipe==='jp'); }
+
+function renderTimetable() {
+  const kId = document.getElementById('ttKelas').value;
+  const cont = document.getElementById('ttContainer');
+  if (!kId) {
+    cont.innerHTML='<div style="padding:60px;text-align:center;color:var(--text3);"><div style="font-size:48px;margin-bottom:12px;">📅</div><p>Pilih kelas terlebih dahulu</p></div>';
+    return;
+  }
+  const kelas = DB.kelas.find(k=>k.id===kId);
+  const haris = getHaris();
+  const jams = DB.jamPelajaran;
+  const jadwalKls = DB.jadwal[kId]||{};
+  const assigns = DB.assignMapel[kId]||[];
+
+  // Progress bar
+  const jpOnly = getJPOnly();
+  const totalSlot = jpOnly.length * haris.length;
+  const filled = Object.keys(jadwalKls).length;
+  const totalNeeded = assigns.reduce((s,a)=>s+a.jamPerMinggu,0);
+  document.getElementById('ttProgress').innerHTML = `
+    <div style="display:flex;align-items:center;gap:16px;padding:14px 18px;background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);flex-wrap:wrap;">
+      <div style="font-size:12px;color:var(--text3);">📊 Progress Jadwal</div>
+      <div style="font-size:13px;font-weight:700;">${filled} <span style="color:var(--text3);">/ ${totalNeeded} jam</span></div>
+      <div class="progress-bar-wrap" style="flex:1;min-width:200px;"><div class="progress-bar" style="width:${Math.min(100,Math.round(filled/Math.max(totalNeeded,1)*100))}%"></div></div>
+      <div style="font-size:12px;color:${filled>=totalNeeded?'var(--emerald)':'var(--amber)'};">${filled>=totalNeeded?'✅ Lengkap':'⚠ Belum Lengkap'} (${Math.min(100,Math.round(filled/Math.max(totalNeeded,1)*100))}%)</div>
+    </div>`;
+
+  // INFO
+  document.getElementById('ttInfo').innerHTML = `
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <span class="badge badge-sky">📚 ${assigns.length} Mapel</span>
+      <span class="badge badge-amber">⏰ ${totalNeeded} Jam/Minggu</span>
+      <span class="badge badge-indigo">📅 ${haris.length} Hari/Minggu</span>
+    </div>`;
+
+  // Build table
+  let html = `<table class="tt-grid">
+    <thead><tr>
+      <th style="min-width:80px;">Jam</th>
+      ${haris.map(h=>`<th>${h}</th>`).join('')}
+    </tr></thead>
+    <tbody>`;
+
+  jams.forEach((jam,idx) => {
+    const isIst = jam.tipe==='istirahat';
+    html += `<tr>`;
+    html += `<td class="time-td">
+      ${isIst
+        ? `<div class="time-label" style="color:var(--amber);">☕ Istirahat<br>${jam.mulai}–${jam.selesai}</div>`
+        : `<div class="time-label">Jam ${jam.no}<br>${jam.mulai}–${jam.selesai}</div>`
+      }
+    </td>`;
+    haris.forEach(hari => {
+      if (isIst) {
+        html += `<td class="istirahat"><div class="istirahat-label">Istirahat</div></td>`;
+      } else {
+        const key = `${hari}-${idx}`;
+        const slot = jadwalKls[key];
+        if (slot) {
+          const m = DB.mapel.find(x=>x.id===slot.mapelId);
+          const g = DB.guru.find(x=>x.id===slot.guruId);
+          const col = m?m.color:'#64748b';
+          html += `<td class="filled">
+            <div class="slot-block" style="background:${col}33;border-left-color:${col};" onclick="editSlot('${kId}','${key}','${hari}',${idx})">
+              <div class="slot-name">${m?m.kode:'?'} ${m?m.nama:''}</div>
+              <div class="slot-teacher">👤 ${g?g.nama:'—'}</div>
+              <div class="slot-room">🏠 ${slot.room||'—'}</div>
+              <button class="slot-del" onclick="delSlot('${kId}','${key}',event)">✕</button>
+            </div>
+          </td>`;
+        } else {
+          html += `<td data-kelas="${kId}" data-key="${key}" data-hari="${hari}" data-jam="${idx}" onclick="openAddSlot('${kId}','${key}','${hari}',${idx})">
+            <div class="add-hint">+</div>
+          </td>`;
+        }
+      }
+    });
+    html += `</tr>`;
+  });
+  html += `</tbody></table>`;
+  cont.innerHTML = `<div class="tt-wrap">${html}</div>`;
+}
+
+function openAddSlot(kId,key,hari,jamIdx) {
+  pendingSlot = {kId,key,hari,jamIdx};
+  const kelas = DB.kelas.find(k=>k.id===kId);
+  const jam = DB.jamPelajaran[jamIdx];
+  document.getElementById('modalJadwalTitle').textContent = `📅 Tambah Jadwal — ${kelas?kelas.nama:''}`;
+  document.getElementById('modalJadwalInfo').innerHTML = `<b>${hari}</b> • Jam ke-${jam?jam.no:'?'} (${jam?jam.mulai:''}–${jam?jam.selesai:''})`;
+  // Fill mapel from assign
+  const assigns = DB.assignMapel[kId]||[];
+  const mapelSel = document.getElementById('jd_mapel');
+  mapelSel.innerHTML = '<option value="">-- Pilih Mapel --</option>';
+  assigns.forEach(a=>{
+    const m=DB.mapel.find(x=>x.id===a.mapelId);
+    if (m) {
+      const jadwalKls = DB.jadwal[kId]||{};
+      const sudah = Object.values(jadwalKls).filter(s=>s.mapelId===m.id).length;
+      const sisa = a.jamPerMinggu - sudah;
+      mapelSel.innerHTML+=`<option value="${m.id}" data-guru="${a.guruId}" style="color:${sisa<=0?'var(--rose)':'inherit'}">[${m.kode}] ${m.nama} (sisa ${sisa} jam)</option>`;
+    }
+  });
+  document.getElementById('jd_warning').style.display='none';
+  document.getElementById('jd_room').value = kelas?kelas.ruangan||'':'';
+  openModal('modalJadwal');
+}
+
+function autoFillGuruFromMapel() {
+  const mId = document.getElementById('jd_mapel').value;
+  const kId = pendingSlot?.kId;
+  if (!kId||!mId) return;
+  const assign = DB.assignMapel[kId]?.find(x=>x.mapelId===mId);
+  const gs = document.getElementById('jd_guru');
+  gs.innerHTML = '<option value="">-- Pilih Guru --</option>';
+  DB.guru.forEach(g=>{
+    const jam = countGuruJam(g.id);
+    gs.innerHTML+=`<option value="${g.id}" ${assign&&assign.guruId===g.id?'selected':''} style="color:${jam>=g.maxJam?'var(--rose)':'inherit'}">${g.nama} (${jam}/${g.maxJam} jam)</option>`;
+  });
+  if (assign?.guruId) gs.value = assign.guruId;
+  // check guru conflict
+  checkGuruConflict();
+}
+
+function checkGuruConflict() {
+  const gId = document.getElementById('jd_guru').value;
+  const warn = document.getElementById('jd_warning');
+  if (!gId||!pendingSlot) { warn.style.display='none'; return; }
+  const {hari,jamIdx,kId} = pendingSlot;
+  // Check if guru already teaching this slot in another class
+  let conflict = null;
+  Object.entries(DB.jadwal).forEach(([kid,kj])=>{
+    if (kid===kId) return;
+    const key2 = `${hari}-${jamIdx}`;
+    if (kj[key2]?.guruId===gId) {
+      const k=DB.kelas.find(x=>x.id===kid);
+      conflict = k?k.nama:'kelas lain';
+    }
+  });
+  if (conflict) {
+    warn.style.display='block';
+    warn.textContent = `⚠ Guru ini sudah mengajar di slot yang sama di kelas ${conflict}!`;
+  } else { warn.style.display='none'; }
+}
+document.getElementById('jd_guru').addEventListener('change',checkGuruConflict);
+
+function saveJadwal() {
+  const {kId,key} = pendingSlot;
+  const mId = document.getElementById('jd_mapel').value;
+  const gId = document.getElementById('jd_guru').value;
+  const room = document.getElementById('jd_room').value;
+  if (!mId) { toast('Pilih mata pelajaran!','','error'); return; }
+  if (!DB.jadwal[kId]) DB.jadwal[kId]={};
+  DB.jadwal[kId][key]={mapelId:mId,guruId:gId,room};
+  saveDB(); closeModal('modalJadwal'); renderTimetable();
+  const m=DB.mapel.find(x=>x.id===mId);
+  toast(`${m?m.nama:'Mapel'} dijadwalkan!`);
+}
+
+function editSlot(kId,key,hari,jamIdx) {
+  // Open modal with current data
+  pendingSlot={kId,key,hari,jamIdx};
+  const slot = DB.jadwal[kId]?.[key];
+  openAddSlot(kId,key,hari,jamIdx);
+  if (slot) {
+    setTimeout(()=>{
+      document.getElementById('jd_mapel').value=slot.mapelId;
+      autoFillGuruFromMapel();
+      document.getElementById('jd_guru').value=slot.guruId;
+      document.getElementById('jd_room').value=slot.room||'';
+    },100);
+  }
+}
+
+function delSlot(kId,key,e) {
+  e.stopPropagation();
+  if (!DB.jadwal[kId]) return;
+  delete DB.jadwal[kId][key];
+  saveDB(); renderTimetable();
+}
+
+function clearTimetableKelas() {
+  const kId = document.getElementById('ttKelas').value;
+  if (!kId) return;
+  if (!confirm('Hapus semua jadwal kelas ini?')) return;
+  DB.jadwal[kId]={};
+  saveDB(); renderTimetable();
+  toast('Jadwal kelas dihapus!');
+}
+
+function autoFillJadwal() {
+  const kId = document.getElementById('ttKelas').value;
+  if (!kId) { toast('Pilih kelas dulu!','','error'); return; }
+  const assigns = DB.assignMapel[kId]||[];
+  if (!assigns.length) { toast('Belum ada mapel di-assign!','','warning'); return; }
+  if (!DB.jadwalKId) DB.jadwal[kId]={};
+  const haris = getHaris();
+  const jpOnly = getJPOnly();
+  let placed = 0;
+  // Simple sequential fill
+  const queue = [];
+  assigns.forEach(a => {
+    for(let i=0;i<a.jamPerMinggu;i++) queue.push({mapelId:a.mapelId,guruId:a.guruId});
+  });
+  // shuffle
+  queue.sort(()=>Math.random()-0.5);
+  for (let hi=0;hi<haris.length && queue.length;hi++) {
+    for (let ji=0;ji<DB.jamPelajaran.length && queue.length;ji++) {
+      if (DB.jamPelajaran[ji].tipe==='istirahat') continue;
+      const key = `${haris[hi]}-${ji}`;
+      if (DB.jadwal[kId][key]) continue;
+      const item = queue.shift();
+      DB.jadwal[kId][key] = {mapelId:item.mapelId,guruId:item.guruId,room:''};
+      placed++;
+    }
+  }
+  saveDB(); renderTimetable();
+  toast(`Auto-fill selesai!`,`${placed} slot terisi`);
+}
+
+function checkKonflik() {
+  const kId = document.getElementById('ttKelas').value;
+  if (!kId) return;
+  const haris = getHaris();
+  let konflik = [];
+  // Check guru double booking
+  haris.forEach(hari=>{
+    DB.jadwal&&Object.entries(DB.jadwal).forEach(([kid1,kj1])=>{
+      if (kid1===kId) return;
+      Object.entries(kj1).forEach(([k1,s1])=>{
+        const [h1,ji1]=k1.split('-');
+        if (h1!==hari) return;
+        const slot2 = DB.jadwal[kId]?.[k1];
+        if (slot2 && slot2.guruId && slot2.guruId===s1.guruId) {
+          const g=DB.guru.find(x=>x.id===s1.guruId);
+          const k=DB.kelas.find(x=>x.id===kid1);
+          konflik.push(`${hari} Jam ${DB.jamPelajaran[parseInt(ji1)]?.no||ji1}: ${g?g.nama:'Guru'} double booking di ${k?k.nama:''}`);
+        }
+      });
+    });
+  });
+  if (!konflik.length) toast('Tidak ada konflik jadwal! ✅','Semua slot aman');
+  else toast(`${konflik.length} konflik ditemukan!`,konflik.slice(0,2).join('; '),'warning');
+}
+
+function printTimetable() { window.print(); }
+
+// ================ DASHBOARD ================
+function renderDashboard() {
+  // Banner
+  document.getElementById('schoolMetaBanner').innerHTML = `
+    <span class="tag">📚 ${DB.sekolah.kurikulum}</span>
+    <span class="tag">📅 ${DB.sekolah.semester} ${DB.sekolah.tp}</span>
+    <span class="tag">🏫 ${DB.kelas.length} Kelas</span>
+    <span class="tag">👨‍🏫 ${DB.guru.length} Guru</span>
+  `;
+  // Stats
+  const totalJadwal = Object.values(DB.jadwal).reduce((s,v)=>s+Object.keys(v).length,0);
+  document.getElementById('dashStats').innerHTML = [
+    {icon:'🏫',num:DB.jurusan.length,label:'Jurusan',sub:'Program Keahlian',color:'var(--sky)',stat:'--stat-color: var(--sky)'},
+    {icon:'📚',num:DB.kelas.length,label:'Kelas',sub:'Total rombongan belajar',color:'var(--indigo)',stat:'--stat-color: var(--indigo)'},
+    {icon:'📖',num:DB.mapel.length,label:'Mata Pelajaran',sub:'Terdaftar di sistem',color:'var(--violet)',stat:'--stat-color: var(--violet)'},
+    {icon:'👨‍🏫',num:DB.guru.length,label:'Guru',sub:'PNS, PPPK & GTT',color:'var(--emerald)',stat:'--stat-color: var(--emerald)'},
+    {icon:'📅',num:totalJadwal,label:'Slot Dijadwal',sub:'Total slot terisi',color:'var(--amber)',stat:'--stat-color: var(--amber)'},
+    {icon:'⏰',num:DB.jamPelajaran.filter(j=>j.tipe==='jp').length,label:'Jam/Hari',sub:'Jam pelajaran efektif',color:'var(--sky)',stat:'--stat-color: var(--sky)'},
+    {icon:'⚠️',num:hitungKonflik(),label:'Konflik',sub:'Perlu diperiksa',color:'var(--rose)',stat:'--stat-color: var(--rose)'},
+    {icon:'✅',num:DB.kelas.length?Math.round(Object.keys(DB.jadwal).length/DB.kelas.length*100)+'%':'0%',label:'Kelas Terjadwal',sub:'Persentase kelas',color:'var(--emerald)',stat:'--stat-color: var(--emerald)'},
+  ].map(s=>`<div class="stat-card" style="${s.stat}">
+    <div class="stat-icon">${s.icon}</div>
+    <div class="stat-num">${s.num}</div>
+    <div class="stat-label">${s.label}</div>
+    <div class="stat-sub">${s.sub}</div>
+  </div>`).join('');
+
+  // Setup progress
+  const steps = [
+    {label:'Info Sekolah',done:!!DB.sekolah.nama,n:1},
+    {label:'Jurusan',done:DB.jurusan.length>0,n:2},
+    {label:'Kelas',done:DB.kelas.length>0,n:3},
+    {label:'Mata Pelajaran',done:DB.mapel.length>0,n:4},
+    {label:'Guru',done:DB.guru.length>0,n:5},
+    {label:'Jam Pelajaran',done:DB.jamPelajaran.length>0,n:6},
+    {label:'Assign Mapel',done:Object.keys(DB.assignMapel).length>0,n:7},
+  ];
+  const donePct = Math.round(steps.filter(s=>s.done).length/steps.length*100);
+  document.getElementById('setupProgress').innerHTML = `
+    <div style="margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;">
+      <span style="font-size:13px;color:var(--text2);">${donePct}% selesai</span>
+      <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text3);">${steps.filter(s=>s.done).length}/${steps.length} langkah</span>
+    </div>
+    <div class="progress-bar-wrap" style="margin-bottom:16px;"><div class="progress-bar" style="width:${donePct}%"></div></div>
+    ${steps.map(s=>`
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;cursor:pointer;" onclick="goPage('setup');goSetupTab(${s.n})">
+        <div style="width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;
+          background:${s.done?'rgba(16,185,129,0.15)':'rgba(244,63,94,0.1)'};
+          font-size:12px;">${s.done?'✅':'⭕'}</div>
+        <div style="font-size:13px;flex:1;${s.done?'color:var(--text2);':'color:var(--text);font-weight:600;'}">${s.n}. ${s.label}</div>
+        ${!s.done?'<span style="font-size:11px;color:var(--sky);">→ Setup</span>':''}
+      </div>
+    `).join('')}`;
+
+  // Jadwal progress
+  const jp = document.getElementById('jadwalProgress');
+  if (!DB.kelas.length) { jp.innerHTML='<div style="color:var(--text3);font-size:13px;padding:20px;text-align:center;">Belum ada kelas</div>'; }
+  else jp.innerHTML = DB.kelas.slice(0,10).map(k=>{
+    const assigns = DB.assignMapel[k.id]||[];
+    const needed = assigns.reduce((s,a)=>s+a.jamPerMinggu,0);
+    const filled = Object.keys(DB.jadwal[k.id]||{}).length;
+    const pct = needed?Math.min(100,Math.round(filled/needed*100)):0;
+    const j=DB.jurusan.find(x=>x.id===k.jurusanId);
+    return `<div class="class-summary-row" onclick="goPage('jadwal');document.getElementById('ttKelas').value='${k.id}';renderTimetable();">
+      <div style="width:8px;height:8px;border-radius:2px;background:${j?j.color:'var(--sky)'};flex-shrink:0;"></div>
+      <div class="class-name">${k.nama}</div>
+      <div class="class-prog" style="flex:1;">
+        <div class="progress-bar-wrap" style="height:4px;"><div class="progress-bar" style="width:${pct}%;height:100%;"></div></div>
+      </div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:${pct>=100?'var(--emerald)':'var(--text3)'};">${filled}/${needed}</div>
+    </div>`;
+  }).join('');
+
+  // Guru beban
+  const gb = document.getElementById('guruBeban');
+  if (!DB.guru.length) { gb.innerHTML='<div style="color:var(--text3);font-size:13px;padding:20px;text-align:center;">Belum ada guru</div>'; }
+  else gb.innerHTML = DB.guru.map(g=>{
+    const jam=countGuruJam(g.id);
+    const pct=Math.min(100,Math.round(jam/g.maxJam*100));
+    const mapelNm = g.mapelIds.slice(0,2).map(id=>{const m=DB.mapel.find(x=>x.id===id);return m?m.kode:'';}).filter(Boolean).join(', ');
+    return `<div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;">
+      <div style="font-size:12px;font-weight:700;min-width:140px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">${g.nama}</div>
+      <div style="flex:1;"><div class="progress-bar-wrap" style="height:5px;"><div class="progress-bar" style="width:${pct}%;background:${jam>g.maxJam?'var(--rose)':pct>=80?'var(--amber)':'linear-gradient(90deg,var(--sky),var(--indigo))'}"></div></div></div>
+      <div style="font-family:'JetBrains Mono',monospace;font-size:11px;min-width:50px;text-align:right;color:${jam>g.maxJam?'var(--rose)':'var(--text3)'};">${jam}/${g.maxJam}</div>
+    </div>`;
+  }).join('');
+
+  // Konflik
+  const konflikCount = hitungKonflik();
+  document.getElementById('konflikList').innerHTML = konflikCount===0
+    ? '<div style="text-align:center;padding:24px;color:var(--emerald);"><div style="font-size:32px;margin-bottom:8px;">✅</div><p style="font-size:13px;font-weight:700;">Tidak ada konflik jadwal</p></div>'
+    : `<div style="text-align:center;padding:24px;color:var(--rose);"><div style="font-size:32px;margin-bottom:8px;">⚠️</div><p style="font-size:13px;font-weight:700;">${konflikCount} potensi konflik terdeteksi</p><button class="btn btn-danger btn-sm" style="margin-top:12px;" onclick="goPage('jadwal')">Periksa Jadwal →</button></div>`;
+}
+
+function hitungKonflik() {
+  let count = 0;
+  const haris = getHaris();
+  haris.forEach(hari=>{
+    DB.jamPelajaran.forEach((_,ji)=>{
+      const key=`${hari}-${ji}`;
+      const guruInSlot = {};
+      Object.values(DB.jadwal).forEach(kj=>{
+        const slot=kj[key];
+        if(slot?.guruId) {
+          if(guruInSlot[slot.guruId]) count++;
+          guruInSlot[slot.guruId]=true;
+        }
+      });
+    });
+  });
+  return count;
+}
+
+// ================ REKAP ================
+function renderRekap() {
+  const totalJadwal = Object.values(DB.jadwal).reduce((s,v)=>s+Object.keys(v).length,0);
+  document.getElementById('rekapStats').innerHTML = [
+    {icon:'🏫',num:DB.jurusan.length,label:'Jurusan',stat:'--stat-color:var(--sky)'},
+    {icon:'📚',num:DB.kelas.length,label:'Total Kelas',stat:'--stat-color:var(--indigo)'},
+    {icon:'📖',num:DB.mapel.length,label:'Mata Pelajaran',stat:'--stat-color:var(--violet)'},
+    {icon:'📅',num:totalJadwal,label:'Total Slot Jadwal',stat:'--stat-color:var(--emerald)'},
+  ].map(s=>`<div class="stat-card" style="${s.stat}">
+    <div class="stat-icon">${s.icon}</div>
+    <div class="stat-num">${s.num}</div>
+    <div class="stat-label">${s.label}</div>
+  </div>`).join('');
+
+  // Guru beban table
+  document.getElementById('rekapGuruTbody').innerHTML = !DB.guru.length
+    ? '<tr class="empty-row"><td colspan="4">Belum ada guru</td></tr>'
+    : DB.guru.map(g=>{
+        const jam=countGuruJam(g.id);
+        const mapel=g.mapelIds.map(id=>{const m=DB.mapel.find(x=>x.id===id);return m?m.kode:'';}).filter(Boolean).join(', ');
+        const status = jam>g.maxJam?'badge-rose':jam>=g.maxJam*0.8?'badge-amber':'badge-emerald';
+        const label = jam>g.maxJam?'Overload':jam>=g.maxJam*0.8?'Penuh':'Normal';
+        return `<tr>
+          <td style="font-weight:600;">${g.nama}</td>
+          <td style="font-size:12px;">${mapel||'—'}</td>
+          <td style="font-family:'JetBrains Mono',monospace;">${jam}/${g.maxJam} jam</td>
+          <td><span class="badge ${status}">${label}</span></td>
+        </tr>`;
+      }).join('');
+
+  // Kelengkapan jadwal
+  document.getElementById('rekapKelengkapan').innerHTML = !DB.kelas.length
+    ? '<div style="color:var(--text3);padding:20px;text-align:center;">Belum ada kelas</div>'
+    : DB.kelas.map(k=>{
+        const assigns=DB.assignMapel[k.id]||[];
+        const needed=assigns.reduce((s,a)=>s+a.jamPerMinggu,0);
+        const filled=Object.keys(DB.jadwal[k.id]||{}).length;
+        const pct=needed?Math.min(100,Math.round(filled/needed*100)):0;
+        const j=DB.jurusan.find(x=>x.id===k.jurusanId);
+        return `<div style="display:flex;align-items:center;gap:12px;margin-bottom:8px;">
+          <div style="width:8px;height:8px;border-radius:2px;background:${j?j.color:'#64748b'};flex-shrink:0;"></div>
+          <div style="font-size:13px;font-weight:600;min-width:150px;">${k.nama}</div>
+          <div style="flex:1;"><div class="progress-bar-wrap" style="height:5px;"><div class="progress-bar" style="width:${pct}%"></div></div></div>
+          <span class="badge ${pct>=100?'badge-emerald':pct>=50?'badge-amber':'badge-rose'}">${pct}%</span>
+          <div style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text3);">${filled}/${needed}</div>
+        </div>`;
+      }).join('');
+
+  // Per kelas
+  document.getElementById('rekapPerKelas').innerHTML = DB.kelas.map(k=>{
+    const j=DB.jurusan.find(x=>x.id===k.jurusanId);
+    const assigns=DB.assignMapel[k.id]||[];
+    return `<div style="margin-bottom:16px;padding:14px;background:var(--panel2);border-radius:var(--radius-sm);border:1px solid var(--border);">
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px;">
+        <div style="width:4px;height:20px;border-radius:2px;background:${j?j.color:'#64748b'};"></div>
+        <div style="font-size:15px;font-weight:800;">${k.nama}</div>
+        <span class="badge badge-indigo">${k.tingkat}</span>
+        ${j?`<span class="badge" style="background:${j.color}22;color:${j.color};">${j.kode}</span>`:''}
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:8px;">
+        ${assigns.map(a=>{
+          const m=DB.mapel.find(x=>x.id===a.mapelId);
+          const g=DB.guru.find(x=>x.id===a.guruId);
+          const filled=Object.values(DB.jadwal[k.id]||{}).filter(s=>s.mapelId===a.mapelId).length;
+          return m?`<div style="padding:6px 10px;background:${m.color}22;border:1px solid ${m.color}44;border-radius:8px;font-size:11px;">
+            <div style="font-weight:800;color:${m.color};">${m.kode}</div>
+            <div style="color:var(--text2);">${filled}/${a.jamPerMinggu} jam</div>
+          </div>`:'';
+        }).join('')}
+        ${!assigns.length?'<span style="font-size:12px;color:var(--text3);">Belum ada mapel di-assign</span>':''}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ================ IMPORT / EXPORT ================
+function exportAll() {
+  const data = {
+    app:'Benyamin Batau Scheduling App',
+    version:'3.0',
+    school:'UPTD SMKN 1 Sumarorong',
+    exportedAt:new Date().toISOString(),
+    ...DB
+  };
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a');
+  a.href=URL.createObjectURL(blob);
+  a.download=`SMKN1Sumarorong_Jadwal_${DB.sekolah.semester}${DB.sekolah.tp.replace('/','_')}.json`;
+  a.click();
+  toast('Export berhasil!',`File JSON tersimpan`);
+}
+function openImportModal() { openModal('modalImport'); }
+function readImportFile() {
+  const f=document.getElementById('importFile').files[0];
+  if (!f) return;
+  const r=new FileReader();
+  r.onload=e=>{ document.getElementById('importRaw').value=e.target.result; };
+  r.readAsText(f);
+}
+function doImport() {
+  try {
+    const raw=document.getElementById('importRaw').value;
+    const data=JSON.parse(raw);
+    const fields=['sekolah','jurusan','kelas','mapel','guru','jamPelajaran','assignMapel','jadwal'];
+    fields.forEach(f=>{ if(data[f]!==undefined) DB[f]=data[f]; });
+    saveDB(); closeModal('modalImport'); renderDashboard();
+    toast('Import berhasil!',`Data sekolah berhasil dimuat`);
+  } catch(e) { toast('Import gagal!',e.message,'error'); }
+}
+
+// ================ UTILS ================
+function clearInputs(ids) { ids.forEach(id=>{ const el=document.getElementById(id); if(el)el.value=''; }); }
+
+// ================ INIT ================
+// Load sekolah info to form
+function loadSekolahForm() {
+  const s=DB.sekolah;
+  document.getElementById('s_namaSekolah').value=s.nama||'UPTD SMKN 1 Sumarorong';
+  document.getElementById('s_npsn').value=s.npsn||'';
+  document.getElementById('s_kepsek').value=s.kepsek||'';
+  document.getElementById('s_tp').value=s.tp||'2025/2026';
+  document.getElementById('s_semester').value=s.semester||'Ganjil';
+  document.getElementById('s_alamat').value=s.alamat||'';
+  document.getElementById('s_hari').value=s.hari||'6';
+  document.getElementById('s_kur').value=s.kurikulum||'Merdeka';
+}
+loadSekolahForm();
+renderDashboard();
+goSetupTab(1);
+</script>
+</body>
+</html>
